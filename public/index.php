@@ -45,7 +45,7 @@ require __DIR__ . '/../includes/entete.php';
 <section class="sm-banniere" aria-labelledby="titre-accueil">
     <div class="container sm-banniere__contenu">
         <div class="row align-items-center g-5">
-            <div class="col-12 <?= $image_banniere !== null ? 'col-lg-7' : 'col-lg-9 col-xl-8' ?>">
+            <div class="col-12 col-lg-7">
                 <h1 id="titre-accueil">
                     Le maillot de ton équipe,<br>
                     <span class="sm-texte-or">en toute confiance.</span>
@@ -88,6 +88,11 @@ require __DIR__ . '/../includes/entete.php';
                     <img class="sm-banniere__photo" src="<?= e(ressource('images/' . $image_banniere['fichier'])) ?>"
                          alt="Maillot de football" width="<?= e($image_banniere['largeur']) ?>"
                          height="<?= e($image_banniere['hauteur']) ?>" fetchpriority="high" decoding="async">
+                </div>
+            <?php else: ?>
+                <!-- Sans photo : illustration animée (ballon, terrain, orbites), masquée sur mobile -->
+                <div class="col-lg-5 d-none d-lg-block">
+                    <?php require __DIR__ . '/../includes/visuel_accueil.php'; ?>
                 </div>
             <?php endif; ?>
         </div>
