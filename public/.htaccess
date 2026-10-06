@@ -1,0 +1,83 @@
+# =============================================================================
+# SAMA MAILLOT — configuration Apache du dossier public/ (seule racine web, §28)
+#
+# Toutes les règles ci-dessous utilisent des chemins RELATIFS : le site fonctionne
+# aussi bien à l'adresse http://localhost/sama-maillot (XAMPP) qu'à la racine d'un
+# domaine (Infomaniak), sans rien modifier ici.
+# =============================================================================
+
+# Accès autorisé à ce dossier.
+Require all granted
+
+# Pas de liste des fichiers quand un dossier n'a pas d'index.php.
+Options -Indexes
+DirectoryIndex index.php
+
+# Encodage des fichiers texte.
+AddDefaultCharset UTF-8
+
+# Messages de secours si Apache produit lui-même une erreur (cas rares).
+ErrorDocument 403 "Accès refusé. <a href='./'>Retour à l'accueil</a>"
+ErrorDocument 500 "Une erreur est survenue. Réessayez dans un instant."
+
+# -----------------------------------------------------------------------------
+# Redirections propres et pages d'erreur aux couleurs du site
+# -----------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # En production (Infomaniak) : forcer HTTPS. Retirer les « # » des 2 lignes suivantes.
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # « …/index.php » tapé dans l'adresse → « …/ » (adresse plus propre).
+    RewriteCond %{THE_REQUEST} \s(/\S*?/)index\.php[\s?] [NC]
+    RewriteRule (^|/)index\.php$ %1 [R=301,L]
+
+    # Adresses lisibles (§30) — chemins relatifs, valables en sous-dossier comme à la racine :
+    #   maillot/senegal-domicile-2025-2026-142  → maillot/index.php?id=142
+    #   boutique/dakar-foot-store               → boutique/index.php?slug=dakar-foot-store
+    #   catalogue/clubs                         → catalogue/index.php?categorie=clubs
+    RewriteRule ^maillot/[a-z0-9-]*-([0-9]+)/?$ maillot/index.php?id=$1 [L,QSA]
+    RewriteRule ^boutique/([a-z0-9-]+)/?$ boutique/index.php?slug=$1 [L,QSA]
+    RewriteRule ^catalogue/([a-z0-9-]+)/?$ catalogue/index.php?categorie=$1 [L,QSA]
+
+    # Plan du site et consignes aux robots (§30), générés par PHP.
+    RewriteRule ^sitemap\.xml$ sitemap.php [L]
+    RewriteRule ^robots\.txt$ robots.php [L]
+
+    # Dossier sans index.php (ex. /css/) → page 403 « Accès refusé ».
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteCond %{REQUEST_FILENAME}/index.php !-f
+    RewriteRule ^ erreurs/403.php [L]
+
+    # Adresse qui ne correspond à aucun fichier → page 404 « Page introuvable ».
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ erreurs/404.php [L]
+</IfModule>
+
+# -----------------------------------------------------------------------------
+# Fichiers interdits : fichiers cachés (.env, .git...) et fichiers de sauvegarde.
+# -----------------------------------------------------------------------------
+<FilesMatch "(^\.|\.(bak|old|orig|sql|log|ini|sh)$|~$)">
+    Require all denied
+</FilesMatch>
+
+# -----------------------------------------------------------------------------
+# Performance (§29.3) : compression et mise en cache des fichiers statiques.
+# Les adresses CSS/JS contiennent ?v=<date> : un fichier modifié est retéléchargé.
+# -----------------------------------------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/plain application/javascript image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/css "access plus 1 month"
+    ExpiresByType application/javascript "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    ExpiresByType image/webp "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+</IfModule>

@@ -1,0 +1,26 @@
+# Secrets (§24) : seul .env.exemple est versionné
+.env
+
+# Journaux (le dossier est gardé grâce à .gitkeep)
+journaux/*.log
+journaux/*.txt
+journaux/*.verrou
+journaux/.phpunit.cache/
+
+# Fichiers envoyés par les utilisateurs (photos des maillots, logos, pièces de litiges)
+public/uploads/*
+!public/uploads/.htaccess
+
+# Dépendances Composer (étapes suivantes)
+vendor/
+
+# Fichiers système et d'éditeur
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Captures de paiement Wave (données privées)
+stockage/paiements/*
+!stockage/.htaccess
+stockage/litiges/*

@@ -1,0 +1,27 @@
+# =============================================================================
+# SAMA MAILLOT — racine du projet
+#
+# Permet d'ouvrir le site directement à l'adresse http://localhost/sama-maillot
+# sans configurer d'hôte virtuel : chaque adresse est redirigée EN INTERNE vers
+# le dossier public/ (seule racine web, §28).
+#
+#   /sama-maillot/                 → public/index.php
+#   /sama-maillot/pages/faq.php    → public/pages/faq.php
+#   /sama-maillot/.env             → public/.env (n'existe pas) → erreur 404
+#   /sama-maillot/includes/...     → public/includes/... (n'existe pas) → erreur 404
+#
+# Les fichiers sensibles (.env, includes/, journaux/, sql/) ne sont donc JAMAIS
+# accessibles depuis le navigateur.
+# =============================================================================
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Toute adresse est servie depuis public/.
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Sécurité : si mod_rewrite était désactivé, on interdit tout plutôt que d'exposer le projet.
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>

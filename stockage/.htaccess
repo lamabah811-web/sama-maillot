@@ -1,0 +1,3 @@
+# SAMA MAILLOT — fichiers privés (captures de paiement Wave) : jamais servis par Apache.
+# Ils sont lus uniquement par l'espace administrateur (admin/capture.php), après contrôle du rôle.
+Require all denied

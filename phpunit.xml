@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    SAMA MAILLOT — tests automatisés de la logique critique (§32.4).
+    Lancer : vendor/bin/phpunit
+    Les tests utilisent une base SÉPARÉE (sama_maillot_test), recréée à chaque lancement :
+    la base du site n'est jamais touchée.
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/amorce.php"
+         colors="true"
+         cacheDirectory="journaux/.phpunit.cache"
+         failOnWarning="true"
+         failOnRisky="true">
+    <testsuites>
+        <testsuite name="Logique critique">
+            <directory>tests</directory>
+        </testsuite>
+    </testsuites>
+    <php>
+        <env name="APP_ENV" value="local" force="true"/>
+        <env name="DB_NAME" value="sama_maillot_test" force="true"/>
+        <env name="SMTP_HOTE" value="" force="true"/>
+        <env name="SMS_ACTIF" value="0" force="true"/>
+        <env name="PAIEMENT_FOURNISSEUR" value="simulateur" force="true"/>
+    </php>
+</phpunit>

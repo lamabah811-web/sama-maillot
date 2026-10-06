@@ -1,0 +1,2 @@
+# Journaux : jamais accessibles depuis le web (double sécurité, ils sont déjà hors de public/).
+Require all denied

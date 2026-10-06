@@ -1,0 +1,32 @@
+# =============================================================================
+# SAMA MAILLOT — dossier des fichiers envoyés (photos de maillots, logos, bannières)
+# Sécurité (§24) : AUCUN script ne doit pouvoir s'exécuter ici, même si un fichier
+# piégé arrivait à passer les contrôles. Seules les images sont servies.
+# =============================================================================
+
+# Pas de liste des fichiers
+Options -Indexes -ExecCGI
+
+# PHP désactivé dans ce dossier (module PHP d'Apache)
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+
+# Aucun type de script n'est interprété
+RemoveHandler .php .phtml .phar .php3 .php4 .php5 .php7 .php8 .pl .py .cgi .sh
+RemoveType .php .phtml .phar .php3 .php4 .php5 .php7 .php8 .pl .py .cgi .sh
+
+# Tout est refusé...
+Require all denied
+
+# ...sauf les images (les seules que le site enregistre, toujours en WebP)
+<FilesMatch "(?i)^[a-f0-9]{32}\.webp$">
+    Require all granted
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+</IfModule>
