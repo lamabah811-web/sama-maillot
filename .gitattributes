@@ -1,0 +1,6 @@
+# Fins de ligne Unix (LF) pour tout le code : le serveur de production est sous Linux.
+* text=auto eol=lf
+*.png binary
+*.webp binary
+*.jpg binary
+*.ico binary
