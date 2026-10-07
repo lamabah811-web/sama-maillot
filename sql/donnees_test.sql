@@ -8,7 +8,7 @@
 --
 -- Pour tout supprimer : sql/supprimer_donnees_test.sql
 -- Prérequis : sql/base_de_donnees.sql déjà importé.
--- Les photos ne sont pas fournies (envoi par les vendeurs au lot 3) : les cartes
+-- Les photos ne sont pas versionnées (public/uploads/ est exclu de Git) : sans elles, les cartes
 -- affichent « Photo à venir ».
 -- =============================================================================
 
@@ -96,6 +96,15 @@ SELECT * FROM (
     UNION ALL SELECT @b1, @club, (SELECT id FROM equipes WHERE slug = 'jaraaf'), 'Maillot ASC Jaraaf domicile 2024/2025',
            'maillot-asc-jaraaf-domicile-2024-2025', '2024/2025', 'domicile', 'officiel', 'neuf_etiquette', 15000, 1, 2000,
            '[Donnée de test] Le club de la Médina.', 'publie', NOW() - INTERVAL 14 HOUR
+    UNION ALL SELECT @b1, @club, (SELECT id FROM equipes WHERE slug = 'bayern-munich'), 'Maillot Bayern Munich domicile 2024/2025',
+           'maillot-bayern-munich-domicile-2024-2025', '2024/2025', 'domicile', 'officiel', 'neuf_etiquette', 40000, 0, 0,
+           '[Donnée de test] Rouge et blanc, sponsor Telekom.', 'publie', NOW() - INTERVAL 2 HOUR
+    UNION ALL SELECT @b1, @club, (SELECT id FROM equipes WHERE slug = 'chelsea'), 'Maillot Chelsea domicile 2024/2025',
+           'maillot-chelsea-domicile-2024-2025', '2024/2025', 'domicile', 'officiel', 'neuf_etiquette', 42000, 0, 0,
+           '[Donnée de test] Bleu royal à motifs graphiques.', 'publie', NOW() - INTERVAL 1 HOUR
+    UNION ALL SELECT @b1, @sel, (SELECT id FROM equipes WHERE slug = 'espagne'), 'Maillot Espagne extérieur 2024',
+           'maillot-espagne-exterieur-2024', '2024', 'exterieur', 'version_fan', 'neuf_etiquette', 25000, 0, 0,
+           '[Donnée de test] Blanc cassé, finitions rouge et or.', 'publie', NOW() - INTERVAL 3 HOUR
     UNION ALL SELECT @b2, @retro, (SELECT id FROM equipes WHERE slug = 'senegal'), 'Maillot Sénégal 2002 rétro',
            'maillot-senegal-2002-retro', '2002', 'domicile', 'replique', 'neuf_etiquette', 18000, 1, 2500,
            '[Donnée de test] L''épopée de 2002, réédition rétro.', 'publie', NOW() - INTERVAL 15 HOUR

@@ -379,7 +379,7 @@
             });
         }
 
-        // 15. Vitrine de l'accueil : les maillots à l'affiche défilent tout seuls (toutes les 3 s) :
+        // 15. Vitrine de l'accueil : les maillots à l'affiche défilent tout seuls (toutes les 2 s) :
         // chacun arrive par le bas à droite, se pose au centre puis repart vers le haut à gauche.
         // Pause seulement quand un visiteur au clavier est sur le lien (le temps de l'utiliser).
         var vitrine = document.querySelector('[data-vitrine]');
@@ -400,7 +400,7 @@
                         sortant.classList.remove('sm-vitrine__maillot--sortant');
                         void sortant.offsetWidth;
                         sortant.classList.remove('sm-vitrine__maillot--sans-transition');
-                    }, 900);
+                    }, 650);
                 }
                 maillotsVitrine.forEach(function (maillot, i) {
                     var actif = i === rangVitrine;
@@ -428,7 +428,7 @@
                 if (!vitrineEnPause) {
                     afficherMaillot(rangVitrine + 1);
                 }
-            }, 3000);
+            }, 2000);
             vitrine.addEventListener('focusin', function () { vitrineEnPause = true; });
             vitrine.addEventListener('focusout', function () { vitrineEnPause = false; });
         }

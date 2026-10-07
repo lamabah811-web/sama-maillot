@@ -3,7 +3,7 @@
  * SAMA MAILLOT — vitrine de la bannière d'accueil : maillots à l'affiche qui défilent tout seuls.
  *
  * Le maillot détouré flotte en grand, éclairé par des projecteurs et une lueur de sa couleur ;
- * les maillots se succèdent automatiquement : chacun arrive par le bas à droite, se pose au centre,
+ * les maillots se succèdent automatiquement (toutes les 2 s) : chacun arrive par le bas à droite, se pose au centre,
  * puis repart vers le haut à gauche (sama.js, « vitrine de l'accueil »). Chaque maillot mène
  * aux annonces RÉELLES de son équipe dans le catalogue (aucun faux prix, aucun faux produit).
  *

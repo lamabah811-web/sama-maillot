@@ -5608,7 +5608,7 @@ a.sm-alerte-admin:hover {
     margin: 0;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.6s ease, visibility 0.8s;
+    transition: opacity 0.45s ease, visibility 0.6s;
 }
 
 .sm-vitrine__maillot--actif {
@@ -5626,13 +5626,13 @@ a.sm-alerte-admin:hover {
     filter: drop-shadow(0 30px 30px rgba(0, 0, 0, 0.6));
     /* En attente : en bas à droite, petit et incliné */
     transform: translate(70%, 55%) scale(0.45) rotate(14deg);
-    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Sortie : file vers le haut à gauche */
 .sm-vitrine__maillot--sortant img {
     transform: translate(-70%, -55%) scale(0.45) rotate(-14deg);
-    transition: transform 0.8s cubic-bezier(0.64, 0, 0.78, 0);
+    transition: transform 0.55s cubic-bezier(0.64, 0, 0.78, 0);
 }
 
 /* Retour en attente sans traverser l'écran (le maillot est déjà invisible) */
@@ -5642,7 +5642,7 @@ a.sm-alerte-admin:hover {
 
 .sm-vitrine__maillot--actif img {
     transform: none;
-    animation: sm-flotter 3s ease-in-out 0.8s infinite;
+    animation: sm-flotter 2.4s ease-in-out 0.6s infinite;
 }
 
 /* Lueur de la couleur du maillot (discrète : le noir et l'or restent dominants) */
@@ -5729,7 +5729,7 @@ a.sm-alerte-admin:hover {
     inset: 0;
     background: #D4AF37;
     transform-origin: 0 50%;
-    animation: sm-progression 3s linear forwards;
+    animation: sm-progression 2s linear forwards;
 }
 
 /* Particules de lumière qui montent doucement */
