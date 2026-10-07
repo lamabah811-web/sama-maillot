@@ -16,7 +16,8 @@
  *  11. l'ouverture automatique de WhatsApp après une commande via WhatsApp ;
  *  12. la quantité limitée au stock de la taille choisie (fiche maillot) ;
  *  13. les carrousels de cartes (accueil : derniers maillots) ;
- *  14. le lien de paiement Wave de l'abonnement, qui suit la durée choisie.
+ *  14. le lien de paiement Wave de l'abonnement, qui suit la durée choisie ;
+ *  15. la vitrine des maillots à l'affiche de l'accueil (flèches, miniature, défilement).
  */
 (function () {
     'use strict';
@@ -376,6 +377,70 @@
                     }
                 });
             });
+        }
+
+        // 15. Vitrine de l'accueil : maillots à l'affiche (flèches, miniature, défilement automatique).
+        var vitrine = document.querySelector('[data-vitrine]');
+        var maillotsVitrine = vitrine ? vitrine.querySelectorAll('[data-vitrine-maillot]') : [];
+        if (maillotsVitrine.length > 1) {
+            var rangVitrine = 0;
+            var minuterieVitrine = null;
+            var miniatures = vitrine.querySelectorAll('[data-vitrine-miniature]');
+            var numero = vitrine.querySelector('[data-vitrine-numero]');
+            var reduireMouvement = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            var afficherMaillot = function (rang) {
+                rangVitrine = (rang + maillotsVitrine.length) % maillotsVitrine.length;
+                maillotsVitrine.forEach(function (maillot, i) {
+                    var actif = i === rangVitrine;
+                    maillot.classList.toggle('sm-vitrine__maillot--actif', actif);
+                    maillot.setAttribute('aria-hidden', actif ? 'false' : 'true');
+                    var lien = maillot.querySelector('a');
+                    if (lien) {
+                        if (actif) {
+                            lien.removeAttribute('tabindex');
+                        } else {
+                            lien.setAttribute('tabindex', '-1');
+                        }
+                    }
+                });
+                miniatures.forEach(function (miniature, i) {
+                    miniature.classList.toggle('sm-vitrine__miniature--active', i === (rangVitrine + 1) % maillotsVitrine.length);
+                });
+                if (numero) {
+                    numero.textContent = String(rangVitrine + 1);
+                }
+            };
+
+            var arreterDefilement = function () {
+                window.clearInterval(minuterieVitrine);
+                minuterieVitrine = null;
+            };
+            var lancerDefilement = function () {
+                if (!reduireMouvement && minuterieVitrine === null) {
+                    minuterieVitrine = window.setInterval(function () {
+                        afficherMaillot(rangVitrine + 1);
+                    }, 6000);
+                }
+            };
+
+            vitrine.querySelectorAll('[data-vitrine-suivant]').forEach(function (bouton) {
+                bouton.addEventListener('click', function () {
+                    afficherMaillot(rangVitrine + 1);
+                });
+            });
+            vitrine.querySelectorAll('[data-vitrine-precedent]').forEach(function (bouton) {
+                bouton.addEventListener('click', function () {
+                    afficherMaillot(rangVitrine - 1);
+                });
+            });
+
+            // Pause au survol et au clavier : le visiteur garde la main.
+            vitrine.addEventListener('mouseenter', arreterDefilement);
+            vitrine.addEventListener('mouseleave', lancerDefilement);
+            vitrine.addEventListener('focusin', arreterDefilement);
+            vitrine.addEventListener('focusout', lancerDefilement);
+            lancerDefilement();
         }
 
         // 11. Commande via WhatsApp : ouverture automatique de la discussion (le bouton reste en secours).
