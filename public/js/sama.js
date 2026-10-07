@@ -424,8 +424,17 @@
                 });
             };
 
+            // Bannière hors de l'écran : animations et défilement en pause (économise le processeur).
+            var vitrineHorsEcran = false;
+            if ('IntersectionObserver' in window) {
+                new IntersectionObserver(function (entrees) {
+                    vitrineHorsEcran = !entrees[0].isIntersecting;
+                    vitrine.classList.toggle('sm-visuel--pause', vitrineHorsEcran);
+                }).observe(vitrine);
+            }
+
             window.setInterval(function () {
-                if (!vitrineEnPause) {
+                if (!vitrineEnPause && !vitrineHorsEcran) {
                     afficherMaillot(rangVitrine + 1);
                 }
             }, 2000);
