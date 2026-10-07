@@ -5535,209 +5535,204 @@ a.sm-alerte-admin:hover {
 }
 
 /* ===========================================================================
-   Bannière : illustration (ballon, terrain, orbites) — décorative, ordinateur
+   Bannière : illustration (terrain de football en 3D) — décorative, ordinateur
    =========================================================================== */
 .sm-visuel {
     position: relative;
     width: 100%;
-    max-width: 30rem;
-    aspect-ratio: 1 / 1;
+    max-width: 32rem;
+    aspect-ratio: 1 / 0.86;
     margin-left: auto;
 }
 
+/* Lueur dorée sous le terrain */
 .sm-visuel__halo {
     position: absolute;
-    inset: 12%;
+    left: 8%;
+    right: 8%;
+    top: 28%;
+    bottom: 6%;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(212, 175, 55, 0.38) 0%, rgba(212, 175, 55, 0.08) 45%, transparent 70%);
-    filter: blur(8px);
-    animation: sm-respirer 6s ease-in-out infinite;
+    background: radial-gradient(ellipse, rgba(212, 175, 55, 0.32) 0%, rgba(212, 175, 55, 0.07) 50%, transparent 72%);
+    filter: blur(14px);
+    animation: sm-respirer 7s ease-in-out infinite;
 }
 
-/* Terrain en perspective, fondu vers le haut */
-.sm-visuel__terrain {
+/* Faisceaux de projecteurs (stade de nuit) */
+.sm-visuel__projecteur {
     position: absolute;
-    left: -6%;
-    right: -6%;
-    bottom: 2%;
-    transform: perspective(700px) rotateX(62deg);
-    transform-origin: 50% 100%;
-    -webkit-mask-image: linear-gradient(to top, #000 35%, transparent 95%);
-    mask-image: linear-gradient(to top, #000 35%, transparent 95%);
+    top: -18%;
+    width: 34%;
+    height: 95%;
+    background: linear-gradient(to bottom, rgba(255, 244, 205, 0.32), rgba(212, 175, 55, 0.08) 55%, transparent 85%);
+    clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
+    filter: blur(6px);
+    mix-blend-mode: screen;
+    pointer-events: none;
+    animation: sm-projecteur 5.5s ease-in-out infinite;
 }
 
-.sm-visuel__terrain svg {
+.sm-visuel__projecteur--gauche {
+    left: 6%;
+    transform: rotate(-24deg);
+    transform-origin: 50% 0;
+}
+
+.sm-visuel__projecteur--droite {
+    right: 6%;
+    transform: rotate(24deg);
+    transform-origin: 50% 0;
+    animation-delay: 2.4s;
+}
+
+/* Terrain incliné en perspective */
+.sm-visuel__scene {
+    position: absolute;
+    inset: 22% 0 6%;
+    perspective: 1000px;
+}
+
+.sm-visuel__terrain {
     display: block;
     width: 100%;
     height: auto;
-}
-
-.sm-visuel__lignes {
-    stroke: rgba(212, 175, 55, 0.55);
-    stroke-width: 2;
-}
-
-.sm-visuel__point {
-    fill: rgba(212, 175, 55, 0.8);
-}
-
-/* Orbites autour du ballon */
-.sm-visuel__orbites {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
     overflow: visible;
+    transform: rotateX(56deg) rotateZ(-28deg);
+    transform-origin: 50% 50%;
+    filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.6));
+    animation: sm-terrain 14s ease-in-out infinite;
 }
 
-.sm-visuel__orbite {
-    stroke: rgba(212, 175, 55, 0.45);
-    stroke-width: 1.5;
-    stroke-dasharray: 2 10;
+.sm-visuel__pelouse {
+    stroke: rgba(212, 175, 55, 0.25);
+    stroke-width: 1;
+}
+
+.sm-visuel__bande {
+    fill: rgba(212, 175, 55, 0.05);
+}
+
+/* Lignes dorées lumineuses, dessinées à l'ouverture de la page */
+.sm-visuel__lignes {
+    stroke: #E2C15A;
+    stroke-width: 1.8;
     stroke-linecap: round;
+    filter: drop-shadow(0 0 2.5px rgba(243, 220, 138, 0.85));
+}
+
+.sm-visuel__lignes > * {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    animation: sm-tracer 2.6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.sm-visuel__lignes > :nth-child(2) { animation-delay: 0.35s; }
+.sm-visuel__lignes > :nth-child(3) { animation-delay: 0.6s; }
+.sm-visuel__lignes > :nth-child(n + 4) { animation-delay: 0.9s; }
+.sm-visuel__lignes > :nth-child(n + 8) { animation-delay: 1.2s; }
+
+.sm-visuel__points circle {
+    fill: #F3DC8A;
+}
+
+/* Ondes depuis le rond central */
+.sm-visuel__onde {
+    stroke: rgba(243, 220, 138, 0.7);
+    stroke-width: 1.2;
     transform-box: fill-box;
     transform-origin: center;
+    opacity: 0;
+    animation: sm-onde 4.5s ease-out 2.6s infinite;
 }
 
-.sm-visuel__orbite--1 {
-    animation: sm-tourner 26s linear infinite;
+.sm-visuel__onde--2 {
+    animation-delay: 4.85s;
 }
 
-.sm-visuel__orbite--2 {
-    stroke: rgba(255, 255, 255, 0.12);
-    stroke-dasharray: none;
-    animation: sm-tourner 60s linear infinite reverse;
+/* Lumière qui court le long des lignes de touche */
+.sm-visuel__comete {
+    stroke: #FFF6D5;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 7 93;
+    stroke-dashoffset: 0;
+    filter: drop-shadow(0 0 5px rgba(255, 236, 170, 1)) drop-shadow(0 0 12px rgba(212, 175, 55, 0.9));
+    opacity: 0;
+    animation: sm-comete 7s linear 2.4s infinite;
 }
 
-/* Ballon */
-.sm-visuel__ballon {
+.sm-visuel__comete--2 {
+    animation-delay: 5.9s;
+}
+
+/* Particules de lumière qui montent doucement */
+.sm-visuel__particule {
     position: absolute;
-    left: 50%;
-    top: 46%;
-    width: 46%;
-    translate: -50% -50%;
-    filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.55)) drop-shadow(0 0 28px rgba(212, 175, 55, 0.25));
-    animation: sm-flotter 5s ease-in-out infinite;
-}
-
-.sm-visuel__ballon svg {
-    display: block;
-    width: 100%;
-    height: auto;
-}
-
-.sm-visuel__motifs {
-    transform-box: view-box;
-    transform-origin: center;
-    animation: sm-tourner 40s linear infinite;
-}
-
-.sm-visuel__pieces polygon {
-    fill: #141414;
-    stroke: #141414;
-    stroke-width: 2;
-    stroke-linejoin: round;
-}
-
-.sm-visuel__coutures line {
-    stroke: rgba(20, 20, 20, 0.35);
-    stroke-width: 1.6;
-}
-
-.sm-visuel__contour {
-    stroke: rgba(243, 220, 138, 0.9);
-    stroke-width: 1.5;
-}
-
-.sm-visuel__ombre {
-    position: absolute;
-    left: 50%;
-    top: 74%;
-    width: 34%;
-    height: 7%;
-    translate: -50% 0;
+    bottom: 22%;
+    width: 4px;
+    height: 4px;
     border-radius: 50%;
-    background: radial-gradient(ellipse, rgba(0, 0, 0, 0.75), transparent 70%);
-    animation: sm-ombre 5s ease-in-out infinite;
-}
-
-/* Étincelles dorées (étoiles à 4 branches) */
-.sm-visuel__etincelle {
-    position: absolute;
-    width: 14px;
-    height: 14px;
     background: #F3DC8A;
-    clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%);
-    filter: drop-shadow(0 0 6px rgba(243, 220, 138, 0.9));
-    animation: sm-scintiller 3.2s ease-in-out infinite;
+    box-shadow: 0 0 8px 2px rgba(243, 220, 138, 0.8);
+    opacity: 0;
+    animation: sm-particule 7s ease-in infinite;
 }
 
-.sm-visuel__etincelle--1 { left: 12%; top: 22%; }
-.sm-visuel__etincelle--2 { left: 84%; top: 12%; width: 10px; height: 10px; animation-delay: 0.8s; }
-.sm-visuel__etincelle--3 { left: 90%; top: 56%; animation-delay: 1.6s; }
-.sm-visuel__etincelle--4 { left: 6%; top: 66%; width: 9px; height: 9px; animation-delay: 2.2s; }
-.sm-visuel__etincelle--5 { left: 58%; top: 4%; width: 8px; height: 8px; animation-delay: 1.1s; }
+.sm-visuel__particule--1 { left: 18%; animation-delay: 0s; }
+.sm-visuel__particule--2 { left: 34%; animation-delay: 2.1s; width: 3px; height: 3px; }
+.sm-visuel__particule--3 { left: 52%; animation-delay: 4.3s; }
+.sm-visuel__particule--4 { left: 66%; animation-delay: 1.2s; width: 3px; height: 3px; }
+.sm-visuel__particule--5 { left: 80%; animation-delay: 3.4s; }
+.sm-visuel__particule--6 { left: 44%; animation-delay: 5.6s; width: 2px; height: 2px; }
 
-/* Étiquettes flottantes, effet verre dépoli */
-.sm-visuel__etiquette {
-    position: absolute;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    padding: 0.5rem 0.85rem;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.07);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-    color: #FFFFFF;
-    font-size: 0.82rem;
-    font-weight: 600;
-    white-space: nowrap;
-    animation: sm-flotter-doux 6s ease-in-out infinite;
+@keyframes sm-tracer {
+    to { stroke-dashoffset: 0; }
 }
 
-.sm-visuel__etiquette .bi {
-    color: #D4AF37;
+@keyframes sm-onde {
+    0% { opacity: 0.9; transform: scale(1); }
+    100% { opacity: 0; transform: scale(3.2); }
 }
 
-.sm-visuel__etiquette--1 { left: -4%; top: 18%; }
-.sm-visuel__etiquette--2 { right: -2%; top: 34%; animation-delay: 1.5s; }
-.sm-visuel__etiquette--3 { left: 6%; bottom: 20%; animation-delay: 3s; }
-
-@keyframes sm-tourner {
-    to { rotate: 360deg; }
+@keyframes sm-comete {
+    0% { opacity: 1; stroke-dashoffset: 0; }
+    100% { opacity: 1; stroke-dashoffset: -100; }
 }
 
-@keyframes sm-flotter {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-14px); }
+@keyframes sm-terrain {
+    0%, 100% { transform: rotateX(56deg) rotateZ(-28deg) translateZ(0); }
+    50% { transform: rotateX(54deg) rotateZ(-24deg) translateZ(12px); }
 }
 
-@keyframes sm-flotter-doux {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-}
-
-@keyframes sm-ombre {
-    0%, 100% { transform: scaleX(1); opacity: 0.9; }
-    50% { transform: scaleX(0.8); opacity: 0.55; }
+@keyframes sm-projecteur {
+    0%, 100% { opacity: 0.75; }
+    50% { opacity: 1; }
 }
 
 @keyframes sm-respirer {
     0%, 100% { opacity: 0.85; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.06); }
+    50% { opacity: 1; transform: scale(1.05); }
 }
 
-@keyframes sm-scintiller {
-    0%, 100% { opacity: 0.2; transform: scale(0.6) rotate(0deg); }
-    50% { opacity: 1; transform: scale(1) rotate(45deg); }
+@keyframes sm-particule {
+    0% { opacity: 0; transform: translateY(0) scale(0.6); }
+    15% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-14rem) scale(1); }
 }
 
 @media (prefers-reduced-motion: reduce) {
     .sm-visuel *,
     .sm-visuel__halo {
         animation: none !important;
+    }
+
+    .sm-visuel__lignes > * {
+        stroke-dashoffset: 0;
+    }
+
+    .sm-visuel__comete,
+    .sm-visuel__onde,
+    .sm-visuel__particule {
+        display: none;
     }
 }
