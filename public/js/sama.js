@@ -17,7 +17,7 @@
  *  12. la quantité limitée au stock de la taille choisie (fiche maillot) ;
  *  13. les carrousels de cartes (accueil : derniers maillots) ;
  *  14. le lien de paiement Wave de l'abonnement, qui suit la durée choisie ;
- *  15. la vitrine des maillots à l'affiche de l'accueil (flèches, miniature, défilement).
+ *  15. la vitrine des maillots à l'affiche de l'accueil (défilement automatique).
  */
 (function () {
     'use strict';
@@ -379,18 +379,17 @@
             });
         }
 
-        // 15. Vitrine de l'accueil : maillots à l'affiche (flèches, miniature, défilement automatique).
+        // 15. Vitrine de l'accueil : les maillots à l'affiche défilent tout seuls (toutes les 6 s).
+        // Pause seulement quand un visiteur au clavier est sur le lien (le temps de l'utiliser).
         var vitrine = document.querySelector('[data-vitrine]');
         var maillotsVitrine = vitrine ? vitrine.querySelectorAll('[data-vitrine-maillot]') : [];
         if (maillotsVitrine.length > 1) {
             var rangVitrine = 0;
-            var minuterieVitrine = null;
-            var miniatures = vitrine.querySelectorAll('[data-vitrine-miniature]');
-            var numero = vitrine.querySelector('[data-vitrine-numero]');
-            var reduireMouvement = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var pointsVitrine = vitrine.querySelectorAll('[data-vitrine-point]');
+            var vitrineEnPause = false;
 
             var afficherMaillot = function (rang) {
-                rangVitrine = (rang + maillotsVitrine.length) % maillotsVitrine.length;
+                rangVitrine = rang % maillotsVitrine.length;
                 maillotsVitrine.forEach(function (maillot, i) {
                     var actif = i === rangVitrine;
                     maillot.classList.toggle('sm-vitrine__maillot--actif', actif);
@@ -404,43 +403,22 @@
                         }
                     }
                 });
-                miniatures.forEach(function (miniature, i) {
-                    miniature.classList.toggle('sm-vitrine__miniature--active', i === (rangVitrine + 1) % maillotsVitrine.length);
+                pointsVitrine.forEach(function (point, i) {
+                    point.classList.remove('sm-vitrine__point--actif');
+                    if (i === rangVitrine) {
+                        void point.offsetWidth; // relance l'animation de remplissage
+                        point.classList.add('sm-vitrine__point--actif');
+                    }
                 });
-                if (numero) {
-                    numero.textContent = String(rangVitrine + 1);
-                }
             };
 
-            var arreterDefilement = function () {
-                window.clearInterval(minuterieVitrine);
-                minuterieVitrine = null;
-            };
-            var lancerDefilement = function () {
-                if (!reduireMouvement && minuterieVitrine === null) {
-                    minuterieVitrine = window.setInterval(function () {
-                        afficherMaillot(rangVitrine + 1);
-                    }, 6000);
-                }
-            };
-
-            vitrine.querySelectorAll('[data-vitrine-suivant]').forEach(function (bouton) {
-                bouton.addEventListener('click', function () {
+            window.setInterval(function () {
+                if (!vitrineEnPause) {
                     afficherMaillot(rangVitrine + 1);
-                });
-            });
-            vitrine.querySelectorAll('[data-vitrine-precedent]').forEach(function (bouton) {
-                bouton.addEventListener('click', function () {
-                    afficherMaillot(rangVitrine - 1);
-                });
-            });
-
-            // Pause au survol et au clavier : le visiteur garde la main.
-            vitrine.addEventListener('mouseenter', arreterDefilement);
-            vitrine.addEventListener('mouseleave', lancerDefilement);
-            vitrine.addEventListener('focusin', arreterDefilement);
-            vitrine.addEventListener('focusout', lancerDefilement);
-            lancerDefilement();
+                }
+            }, 6000);
+            vitrine.addEventListener('focusin', function () { vitrineEnPause = true; });
+            vitrine.addEventListener('focusout', function () { vitrineEnPause = false; });
         }
 
         // 11. Commande via WhatsApp : ouverture automatique de la discussion (le bouton reste en secours).

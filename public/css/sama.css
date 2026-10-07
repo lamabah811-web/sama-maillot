@@ -5535,36 +5535,33 @@ a.sm-alerte-admin:hover {
 }
 
 /* ===========================================================================
-   Bannière : illustration (terrain de football en 3D) — décorative, ordinateur
+   Bannière : vitrine des maillots à l'affiche (défilement automatique) — ordinateur
    =========================================================================== */
 .sm-visuel {
     position: relative;
     width: 100%;
-    max-width: 32rem;
-    aspect-ratio: 1 / 1.02;
+    max-width: 30rem;
+    aspect-ratio: 1 / 1.08;
     margin-left: auto;
 }
 
-/* Lueur dorée sous le terrain */
+/* Lueur dorée derrière le maillot */
 .sm-visuel__halo {
     position: absolute;
-    left: 8%;
-    right: 8%;
-    top: 40%;
-    bottom: 0;
+    inset: 10% 6% 8%;
     border-radius: 50%;
-    background: radial-gradient(ellipse, rgba(212, 175, 55, 0.32) 0%, rgba(212, 175, 55, 0.07) 50%, transparent 72%);
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.06) 50%, transparent 72%);
     filter: blur(14px);
     animation: sm-respirer 7s ease-in-out infinite;
 }
 
-/* Faisceaux de projecteurs (stade de nuit) */
+/* Faisceaux de projecteurs */
 .sm-visuel__projecteur {
     position: absolute;
-    top: -18%;
+    top: -16%;
     width: 34%;
-    height: 95%;
-    background: linear-gradient(to bottom, rgba(255, 244, 205, 0.32), rgba(212, 175, 55, 0.08) 55%, transparent 85%);
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(255, 244, 205, 0.3), rgba(212, 175, 55, 0.07) 55%, transparent 85%);
     clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
     filter: blur(6px);
     mix-blend-mode: screen;
@@ -5573,102 +5570,157 @@ a.sm-alerte-admin:hover {
 }
 
 .sm-visuel__projecteur--gauche {
-    left: 6%;
-    transform: rotate(-24deg);
+    left: 4%;
+    transform: rotate(-22deg);
     transform-origin: 50% 0;
 }
 
 .sm-visuel__projecteur--droite {
-    right: 6%;
-    transform: rotate(24deg);
+    right: 4%;
+    transform: rotate(22deg);
     transform-origin: 50% 0;
     animation-delay: 2.4s;
 }
 
-/* Terrain incliné en perspective */
-.sm-visuel__scene {
+/* Socle lumineux sous le maillot (ellipse dorée) */
+.sm-visuel__socle {
     position: absolute;
-    inset: 46% 4% 4%;
-    perspective: 1000px;
+    left: 50%;
+    bottom: 17%;
+    width: 62%;
+    height: 9%;
+    translate: -50% 0;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(212, 175, 55, 0.45) 0%, rgba(212, 175, 55, 0.12) 45%, transparent 72%);
+    box-shadow: 0 0 0 1px rgba(226, 193, 90, 0.35), 0 0 30px rgba(212, 175, 55, 0.25);
+    animation: sm-socle 5.5s ease-in-out infinite;
 }
 
-.sm-visuel__terrain {
-    display: block;
-    width: 100%;
+/* Maillots */
+.sm-vitrine {
+    position: absolute;
+    inset: 0;
+}
+
+.sm-vitrine__maillot {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.9s ease, visibility 0.9s;
+}
+
+.sm-vitrine__maillot--actif {
+    opacity: 1;
+    visibility: visible;
+}
+
+.sm-vitrine__maillot img {
+    position: absolute;
+    left: 50%;
+    top: 4%;
+    width: 66%;
     height: auto;
-    overflow: visible;
-    transform: rotateX(56deg) rotateZ(-28deg);
-    transform-origin: 50% 50%;
-    filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.6));
-    animation: sm-terrain 14s ease-in-out infinite;
+    translate: -50% 0;
+    filter: drop-shadow(0 30px 30px rgba(0, 0, 0, 0.6));
+    transform: translateX(50px) scale(0.9) rotate(5deg);
+    transition: transform 1s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.sm-visuel__pelouse {
-    stroke: rgba(212, 175, 55, 0.25);
-    stroke-width: 1;
+.sm-vitrine__maillot--actif img {
+    transform: none;
+    animation: sm-flotter 5.5s ease-in-out 1s infinite;
 }
 
-.sm-visuel__bande {
-    fill: rgba(212, 175, 55, 0.05);
+/* Lueur de la couleur du maillot (discrète : le noir et l'or restent dominants) */
+.sm-vitrine__lueur {
+    position: absolute;
+    left: 50%;
+    top: 12%;
+    width: 72%;
+    aspect-ratio: 1;
+    translate: -50% 0;
+    border-radius: 50%;
+    filter: blur(34px);
+    opacity: 0.55;
 }
 
-/* Lignes dorées lumineuses, dessinées à l'ouverture de la page */
-.sm-visuel__lignes {
-    stroke: #E2C15A;
-    stroke-width: 1.8;
-    stroke-linecap: round;
-    filter: drop-shadow(0 0 2.5px rgba(243, 220, 138, 0.85));
+.sm-vitrine__maillot--bleu .sm-vitrine__lueur { background: radial-gradient(circle, rgba(55, 90, 230, 0.75), transparent 68%); }
+.sm-vitrine__maillot--grenat .sm-vitrine__lueur { background: radial-gradient(circle, rgba(180, 30, 75, 0.75), transparent 68%); }
+.sm-vitrine__maillot--blanc .sm-vitrine__lueur { background: radial-gradient(circle, rgba(255, 255, 255, 0.45), transparent 68%); }
+
+/* Nom de l'équipe et lien, sous le maillot */
+.sm-vitrine__legende {
+    position: absolute;
+    left: 50%;
+    bottom: 1%;
+    translate: -50% 0;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    white-space: nowrap;
+    padding: 0.6rem 1.1rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    background: rgba(11, 11, 11, 0.62);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
 }
 
-.sm-visuel__lignes > * {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    animation: sm-tracer 2.6s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+.sm-vitrine__equipe {
+    font-family: var(--sm-police-titre);
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: #FFFFFF;
 }
 
-.sm-visuel__lignes > :nth-child(2) { animation-delay: 0.35s; }
-.sm-visuel__lignes > :nth-child(3) { animation-delay: 0.6s; }
-.sm-visuel__lignes > :nth-child(n + 4) { animation-delay: 0.9s; }
-.sm-visuel__lignes > :nth-child(n + 8) { animation-delay: 1.2s; }
-
-.sm-visuel__points circle {
-    fill: #F3DC8A;
+.sm-vitrine__lien {
+    color: #E2C15A;
+    font-weight: 600;
+    font-size: 0.88rem;
+    text-decoration: none;
 }
 
-/* Ondes depuis le rond central */
-.sm-visuel__onde {
-    stroke: rgba(243, 220, 138, 0.7);
-    stroke-width: 1.2;
-    transform-box: fill-box;
-    transform-origin: center;
-    opacity: 0;
-    animation: sm-onde 4.5s ease-out 2.6s infinite;
+.sm-vitrine__lien:hover,
+.sm-vitrine__lien:focus-visible {
+    color: #F3DC8A;
+    text-decoration: underline;
 }
 
-.sm-visuel__onde--2 {
-    animation-delay: 4.85s;
+/* Indicateur de position : petits traits, le trait actif se remplit pendant l'affichage */
+.sm-vitrine__points {
+    position: absolute;
+    right: 0;
+    top: 2%;
+    display: flex;
+    gap: 0.4rem;
 }
 
-/* Lumière qui court le long des lignes de touche */
-.sm-visuel__comete {
-    stroke: #FFF6D5;
-    stroke-width: 3;
-    stroke-linecap: round;
-    stroke-dasharray: 7 93;
-    stroke-dashoffset: 0;
-    filter: drop-shadow(0 0 5px rgba(255, 236, 170, 1)) drop-shadow(0 0 12px rgba(212, 175, 55, 0.9));
-    opacity: 0;
-    animation: sm-comete 7s linear 2.4s infinite;
+.sm-vitrine__points span {
+    position: relative;
+    width: 1.6rem;
+    height: 3px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.2);
+    overflow: hidden;
 }
 
-.sm-visuel__comete--2 {
-    animation-delay: 5.9s;
+.sm-vitrine__points span.sm-vitrine__point--actif::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #D4AF37;
+    transform-origin: 0 50%;
+    animation: sm-progression 6s linear forwards;
 }
 
 /* Particules de lumière qui montent doucement */
 .sm-visuel__particule {
     position: absolute;
-    bottom: 22%;
+    bottom: 18%;
     width: 4px;
     height: 4px;
     border-radius: 50%;
@@ -5678,30 +5730,26 @@ a.sm-alerte-admin:hover {
     animation: sm-particule 7s ease-in infinite;
 }
 
-.sm-visuel__particule--1 { left: 18%; animation-delay: 0s; }
-.sm-visuel__particule--2 { left: 34%; animation-delay: 2.1s; width: 3px; height: 3px; }
-.sm-visuel__particule--3 { left: 52%; animation-delay: 4.3s; }
-.sm-visuel__particule--4 { left: 66%; animation-delay: 1.2s; width: 3px; height: 3px; }
-.sm-visuel__particule--5 { left: 80%; animation-delay: 3.4s; }
-.sm-visuel__particule--6 { left: 44%; animation-delay: 5.6s; width: 2px; height: 2px; }
+.sm-visuel__particule--1 { left: 16%; animation-delay: 0s; }
+.sm-visuel__particule--2 { left: 30%; animation-delay: 2.1s; width: 3px; height: 3px; }
+.sm-visuel__particule--3 { left: 70%; animation-delay: 4.3s; }
+.sm-visuel__particule--4 { left: 82%; animation-delay: 1.2s; width: 3px; height: 3px; }
+.sm-visuel__particule--5 { left: 88%; animation-delay: 3.4s; }
+.sm-visuel__particule--6 { left: 10%; animation-delay: 5.6s; width: 2px; height: 2px; }
 
-@keyframes sm-tracer {
-    to { stroke-dashoffset: 0; }
+@keyframes sm-flotter {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
 }
 
-@keyframes sm-onde {
-    0% { opacity: 0.9; transform: scale(1); }
-    100% { opacity: 0; transform: scale(3.2); }
+@keyframes sm-socle {
+    0%, 100% { opacity: 1; transform: scaleX(1); }
+    50% { opacity: 0.7; transform: scaleX(0.9); }
 }
 
-@keyframes sm-comete {
-    0% { opacity: 1; stroke-dashoffset: 0; }
-    100% { opacity: 1; stroke-dashoffset: -100; }
-}
-
-@keyframes sm-terrain {
-    0%, 100% { transform: rotateX(56deg) rotateZ(-28deg) translateZ(0); }
-    50% { transform: rotateX(54deg) rotateZ(-24deg) translateZ(12px); }
+@keyframes sm-progression {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
 }
 
 @keyframes sm-projecteur {
@@ -5722,210 +5770,13 @@ a.sm-alerte-admin:hover {
 
 @media (prefers-reduced-motion: reduce) {
     .sm-visuel *,
-    .sm-visuel__halo {
+    .sm-visuel__halo,
+    .sm-visuel__socle {
         animation: none !important;
+        transition: none !important;
     }
 
-    .sm-visuel__lignes > * {
-        stroke-dashoffset: 0;
-    }
-
-    .sm-visuel__comete,
-    .sm-visuel__onde,
     .sm-visuel__particule {
         display: none;
     }
-}
-
-/* Vitrine : maillot à l'affiche qui flotte au-dessus du terrain */
-.sm-vitrine {
-    position: absolute;
-    inset: 0;
-}
-
-.sm-vitrine__maillot {
-    position: absolute;
-    inset: 0;
-    margin: 0;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.7s ease, visibility 0.7s;
-}
-
-.sm-vitrine__maillot--actif {
-    opacity: 1;
-    visibility: visible;
-}
-
-.sm-vitrine__maillot img {
-    position: absolute;
-    left: 50%;
-    top: 4%;
-    width: 52%;
-    height: auto;
-    translate: -50% 0;
-    filter: drop-shadow(0 26px 28px rgba(0, 0, 0, 0.6));
-    transform: translateX(40px) scale(0.92) rotate(4deg);
-    transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.sm-vitrine__maillot--actif img {
-    transform: none;
-    animation: sm-flotter 5.5s ease-in-out 0.8s infinite;
-}
-
-/* Lueur de la couleur du maillot (discrète, le noir et or restent dominants) */
-.sm-vitrine__lueur {
-    position: absolute;
-    left: 50%;
-    top: 14%;
-    width: 64%;
-    aspect-ratio: 1;
-    translate: -50% 0;
-    border-radius: 50%;
-    filter: blur(30px);
-    opacity: 0.55;
-}
-
-.sm-vitrine__maillot--bleu .sm-vitrine__lueur { background: radial-gradient(circle, rgba(55, 90, 230, 0.75), transparent 68%); }
-.sm-vitrine__maillot--grenat .sm-vitrine__lueur { background: radial-gradient(circle, rgba(180, 30, 75, 0.75), transparent 68%); }
-.sm-vitrine__maillot--blanc .sm-vitrine__lueur { background: radial-gradient(circle, rgba(255, 255, 255, 0.45), transparent 68%); }
-
-.sm-vitrine__legende {
-    position: absolute;
-    left: 0;
-    bottom: 3%;
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
-    padding: 0.65rem 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 1rem;
-    background: rgba(11, 11, 11, 0.62);
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-}
-
-.sm-vitrine__equipe {
-    font-family: var(--sm-police-titre);
-    font-size: 1.15rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-    color: #FFFFFF;
-}
-
-.sm-vitrine__lien {
-    color: #E2C15A;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-decoration: none;
-}
-
-.sm-vitrine__lien:hover,
-.sm-vitrine__lien:focus-visible {
-    color: #F3DC8A;
-    text-decoration: underline;
-}
-
-/* Flèches (en haut à gauche) */
-.sm-vitrine__commandes {
-    position: absolute;
-    left: 0;
-    top: 2%;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    z-index: 2;
-}
-
-.sm-vitrine__fleche {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.07);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    color: #FFFFFF;
-    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-}
-
-.sm-vitrine__fleche:hover {
-    background: #D4AF37;
-    border-color: #D4AF37;
-    color: #111111;
-    transform: scale(1.06);
-}
-
-.sm-vitrine__fleche:focus-visible,
-.sm-vitrine__suivant:focus-visible {
-    outline: 2px solid #F3DC8A;
-    outline-offset: 3px;
-}
-
-.sm-vitrine__compteur {
-    min-width: 2.75rem;
-    text-align: center;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.85rem;
-    font-variant-numeric: tabular-nums;
-}
-
-/* Miniature du maillot suivant (en bas à droite) */
-.sm-vitrine__suivant {
-    position: absolute;
-    right: 0;
-    bottom: 2%;
-    z-index: 2;
-    display: grid;
-    place-items: center;
-    width: 5.25rem;
-    height: 5.75rem;
-    padding: 0.4rem;
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 1.1rem;
-    background: rgba(255, 255, 255, 0.07);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
-    transition: transform 0.25s ease, border-color 0.25s ease;
-}
-
-.sm-vitrine__suivant:hover {
-    transform: translateY(-3px);
-    border-color: #D4AF37;
-}
-
-.sm-vitrine__suivant img {
-    grid-area: 1 / 1;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
-
-.sm-vitrine__suivant img.sm-vitrine__miniature--active {
-    opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .sm-vitrine__maillot,
-    .sm-vitrine__maillot img,
-    .sm-vitrine__suivant img {
-        transition: none;
-    }
-
-    .sm-vitrine__maillot--actif img {
-        animation: none;
-    }
-}
-
-@keyframes sm-flotter {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-12px); }
 }
