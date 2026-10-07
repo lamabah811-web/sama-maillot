@@ -379,7 +379,8 @@
             });
         }
 
-        // 15. Vitrine de l'accueil : les maillots à l'affiche défilent tout seuls (toutes les 6 s).
+        // 15. Vitrine de l'accueil : les maillots à l'affiche défilent tout seuls (toutes les 3 s) :
+        // chacun arrive par le bas à droite, se pose au centre puis repart vers le haut à gauche.
         // Pause seulement quand un visiteur au clavier est sur le lien (le temps de l'utiliser).
         var vitrine = document.querySelector('[data-vitrine]');
         var maillotsVitrine = vitrine ? vitrine.querySelectorAll('[data-vitrine-maillot]') : [];
@@ -389,7 +390,18 @@
             var vitrineEnPause = false;
 
             var afficherMaillot = function (rang) {
+                var sortant = maillotsVitrine[rangVitrine];
                 rangVitrine = rang % maillotsVitrine.length;
+                if (sortant !== maillotsVitrine[rangVitrine]) {
+                    sortant.classList.add('sm-vitrine__maillot--sortant');
+                    // Une fois invisible, il retourne en attente (en bas à droite) sans traverser l'écran.
+                    window.setTimeout(function () {
+                        sortant.classList.add('sm-vitrine__maillot--sans-transition');
+                        sortant.classList.remove('sm-vitrine__maillot--sortant');
+                        void sortant.offsetWidth;
+                        sortant.classList.remove('sm-vitrine__maillot--sans-transition');
+                    }, 900);
+                }
                 maillotsVitrine.forEach(function (maillot, i) {
                     var actif = i === rangVitrine;
                     maillot.classList.toggle('sm-vitrine__maillot--actif', actif);
@@ -416,7 +428,7 @@
                 if (!vitrineEnPause) {
                     afficherMaillot(rangVitrine + 1);
                 }
-            }, 6000);
+            }, 3000);
             vitrine.addEventListener('focusin', function () { vitrineEnPause = true; });
             vitrine.addEventListener('focusout', function () { vitrineEnPause = false; });
         }

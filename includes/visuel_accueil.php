@@ -3,7 +3,8 @@
  * SAMA MAILLOT — vitrine de la bannière d'accueil : maillots à l'affiche qui défilent tout seuls.
  *
  * Le maillot détouré flotte en grand, éclairé par des projecteurs et une lueur de sa couleur ;
- * les maillots se succèdent automatiquement (sama.js, « vitrine de l'accueil »). Chaque maillot mène
+ * les maillots se succèdent automatiquement : chacun arrive par le bas à droite, se pose au centre,
+ * puis repart vers le haut à gauche (sama.js, « vitrine de l'accueil »). Chaque maillot mène
  * aux annonces RÉELLES de son équipe dans le catalogue (aucun faux prix, aucun faux produit).
  *
  * Images : public/images/vitrine/<fichier>.webp, détourées (fond transparent). Un maillot dont le
@@ -13,8 +14,12 @@
 
 $maillots_vitrine = array_values(array_filter([
     ['fichier' => 'psg.webp', 'equipe' => 'Paris Saint-Germain', 'slug' => 'psg', 'lueur' => 'bleu'],
+    ['fichier' => 'bayern.webp', 'equipe' => 'Bayern Munich', 'slug' => 'bayern-munich', 'lueur' => 'rouge'],
+    ['fichier' => 'city.webp', 'equipe' => 'Manchester City', 'slug' => 'manchester-city', 'lueur' => 'ciel'],
     ['fichier' => 'real.webp', 'equipe' => 'Real Madrid', 'slug' => 'real-madrid', 'lueur' => 'blanc'],
     ['fichier' => 'barca.webp', 'equipe' => 'FC Barcelone', 'slug' => 'fc-barcelone', 'lueur' => 'grenat'],
+    ['fichier' => 'chelsea.webp', 'equipe' => 'Chelsea', 'slug' => 'chelsea', 'lueur' => 'bleu'],
+    ['fichier' => 'espagne.webp', 'equipe' => 'Espagne', 'slug' => 'espagne', 'lueur' => 'creme'],
 ], static fn (array $m): bool => is_file(DOSSIER_PUBLIC . '/images/vitrine/' . $m['fichier'])));
 $nombre_vitrine = count($maillots_vitrine);
 ?>
