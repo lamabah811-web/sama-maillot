@@ -70,8 +70,9 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
     <!--
         Barre de navigation :
         - ordinateur (≥ 1200 px) : logo | Accueil, Catalogue, À propos, Contact |
-          Connexion, Inscription (ou notifications + menu du compte) | loupe | panier ;
-        - mobile et tablette : burger | logo | loupe | panier.
+          notifications + menu du compte (connecté) | loupe | panier | Connexion (visiteur) ;
+        - mobile et tablette : burger | logo | loupe | panier (+ Connexion dès 992 px ; sinon « Compte » en barre basse).
+        Pas de bouton « Inscription » : la page de connexion propose « Créer un compte ».
         Le choix clair / sombre est un bouton rond flottant en bas à droite (pied_de_page.php).
         La loupe ouvre la barre de recherche juste sous l'en-tête (et la referme).
     -->
@@ -92,7 +93,7 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
                 <span class="sm-logo__sama">SAMA</span>&nbsp;<span class="sm-logo__maillot">MAILLOT</span>
             </a>
 
-            <!-- Boutons carrés toujours visibles : recherche puis panier (thème : bouton flottant, pied de page) -->
+            <!-- Toujours visibles : recherche, panier, puis Connexion pour un visiteur (thème : bouton flottant, pied de page) -->
             <div class="d-flex align-items-center gap-1 gap-sm-2 order-xl-last">
                 <!-- Loupe : ouvre / referme la barre de recherche sous l'en-tête -->
                 <button type="button" class="sm-bouton-carre sm-bouton-carre--or sm-bouton-recherche" data-bs-toggle="collapse"
@@ -109,6 +110,13 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
                         <span class="sm-pastille" aria-hidden="true"><?= e($nombre_articles_panier) ?></span>
                     <?php endif; ?>
                 </a>
+
+                <?php if ($utilisateur_entete === null): ?>
+                    <!-- Connexion : tout à droite (tablette en largeur et ordinateur) ; sur téléphone, « Compte » de la barre basse -->
+                    <a class="btn btn-or sm-bouton-connexion d-none d-lg-inline-flex" href="<?= e(url_page('connexion')) ?>"<?= attribut_page_active('connexion') ?>>
+                        <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Connexion
+                    </a>
+                <?php endif; ?>
             </div>
 
             <!-- Menu repliable -->
@@ -154,16 +162,10 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
                     </li>
                 </ul>
 
-                <!-- Compte : Connexion / Inscription, ou notifications + menu du compte -->
-                <div class="sm-actions-compte d-flex flex-column flex-xl-row gap-2 mt-2 mt-xl-0">
-                    <?php if ($utilisateur_entete === null): ?>
-                        <a class="btn btn-contour-or" href="<?= e(url_page('connexion')) ?>"<?= attribut_page_active('connexion') ?>>
-                            <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Connexion
-                        </a>
-                        <a class="btn btn-or" href="<?= e(url_page('inscription')) ?>"<?= attribut_page_active('inscription') ?>>
-                            <i class="bi bi-person-plus-fill" aria-hidden="true"></i> Inscription
-                        </a>
-                    <?php else: ?>
+                <!-- Compte (utilisateur connecté) : notifications + menu du compte.
+                     Visiteur : bouton « Connexion » à droite de l'en-tête ; l'inscription se fait depuis la page de connexion. -->
+                <?php if ($utilisateur_entete !== null): ?>
+                    <div class="sm-actions-compte d-flex flex-column flex-xl-row gap-2 mt-2 mt-xl-0">
                         <div class="d-flex gap-2">
                             <!-- Notifications dans le site (§22.1) : pastille = nombre réel de non lues -->
                             <a class="sm-bouton-carre sm-bouton-carre--or flex-shrink-0" href="<?= e(url_page('notifications')) ?>"
@@ -209,8 +211,8 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
                                 </ul>
                             </div>
                         </div>
-                    <?php endif; ?>
-                </div>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </nav>

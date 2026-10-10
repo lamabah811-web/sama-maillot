@@ -5879,3 +5879,12 @@ a.sm-alerte-admin:hover {
         transition: none;
     }
 }
+
+/* Connexion (visiteur) : tout à droite de l'en-tête, même hauteur que les boutons carrés */
+.sm-bouton-connexion {
+    align-items: center;
+    gap: 0.4rem;
+    height: 44px;
+    padding-inline: 1rem;
+    white-space: nowrap;
+}
