@@ -5888,3 +5888,108 @@ a.sm-alerte-admin:hover {
     padding-inline: 1rem;
     white-space: nowrap;
 }
+
+/* Ordinateur : liens principaux (Accueil, Catalogue, À propos, Contact) centrés au milieu de l'en-tête */
+@media (min-width: 1200px) {
+    .sm-entete .navbar > .container {
+        position: relative;
+    }
+
+    .sm-entete .sm-nav-centre {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* Messages (succès, erreur) : petites notifications flottantes en haut à droite */
+.sm-toasts {
+    position: fixed;
+    top: 5.25rem;
+    right: 1rem;
+    left: 1rem;
+    z-index: 1090;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.6rem;
+    pointer-events: none;
+}
+
+.sm-toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    width: 100%;
+    max-width: 24rem;
+    padding: 0.85rem 0.85rem 0.85rem 1rem;
+    border: 1px solid var(--sm-bordure);
+    border-left: 4px solid var(--sm-or);
+    border-radius: var(--sm-rayon);
+    background: var(--sm-sureleve);
+    color: var(--sm-texte);
+    box-shadow: var(--sm-ombre-forte);
+    font-size: 0.92rem;
+    pointer-events: auto;
+    animation: sm-toast-entree 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sm-toast--succes { border-left-color: var(--sm-succes); }
+.sm-toast--erreur { border-left-color: var(--sm-erreur); }
+.sm-toast--dev { border-left-color: var(--sm-info); }
+
+.sm-toast__icone {
+    flex-shrink: 0;
+    font-size: 1.15rem;
+    line-height: 1.35;
+}
+
+.sm-toast--succes .sm-toast__icone { color: var(--sm-succes); }
+.sm-toast--erreur .sm-toast__icone { color: var(--sm-erreur); }
+.sm-toast--dev .sm-toast__icone { color: var(--sm-info); }
+
+.sm-toast__texte {
+    flex: 1;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.sm-toast__fermer {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    margin: -0.2rem -0.1rem 0 0;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--sm-texte-secondaire);
+}
+
+.sm-toast__fermer:hover,
+.sm-toast__fermer:focus-visible {
+    background: var(--sm-surface);
+    color: var(--sm-texte);
+}
+
+.sm-toast--sortie {
+    opacity: 0;
+    transform: translateX(1.5rem);
+}
+
+@keyframes sm-toast-entree {
+    from { opacity: 0; transform: translateX(1.5rem); }
+    to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sm-toast {
+        animation: none;
+        transition: none;
+    }
+}

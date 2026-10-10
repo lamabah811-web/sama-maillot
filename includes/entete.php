@@ -70,7 +70,7 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
     <!--
         Barre de navigation :
         - ordinateur (≥ 1200 px) : logo | Accueil, Catalogue, À propos, Contact |
-          notifications + menu du compte (connecté) | loupe | panier | Connexion (visiteur) ;
+          loupe | panier | Connexion (visiteur) ou notifications + menu du compte (connecté) ;
         - mobile et tablette : burger | logo | loupe | panier (+ Connexion dès 992 px ; sinon « Compte » en barre basse).
         Pas de bouton « Inscription » : la page de connexion propose « Créer un compte ».
         Le choix clair / sombre est un bouton rond flottant en bas à droite (pied_de_page.php).
@@ -93,7 +93,7 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
                 <span class="sm-logo__sama">SAMA</span>&nbsp;<span class="sm-logo__maillot">MAILLOT</span>
             </a>
 
-            <!-- Toujours visibles : recherche, panier, puis Connexion pour un visiteur (thème : bouton flottant, pied de page) -->
+            <!-- Toujours visibles : recherche, panier, puis Connexion (visiteur) ou compte (connecté) (thème : bouton flottant) -->
             <div class="d-flex align-items-center gap-1 gap-sm-2 order-xl-last">
                 <!-- Loupe : ouvre / referme la barre de recherche sous l'en-tête -->
                 <button type="button" class="sm-bouton-carre sm-bouton-carre--or sm-bouton-recherche" data-bs-toggle="collapse"
@@ -111,7 +111,12 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
                     <?php endif; ?>
                 </a>
 
-                <?php if ($utilisateur_entete === null): ?>
+                <?php if ($utilisateur_entete !== null): ?>
+                    <!-- Compte (connecté) : tout à droite dès 992 px ; sur téléphone, dans le menu burger -->
+                    <div class="sm-compte-droite d-none d-lg-flex">
+                        <?php require __DIR__ . '/compte_entete.php'; ?>
+                    </div>
+                <?php else: ?>
                     <!-- Connexion : tout à droite (tablette en largeur et ordinateur) ; sur téléphone, « Compte » de la barre basse -->
                     <a class="btn btn-or sm-bouton-connexion d-none d-lg-inline-flex" href="<?= e(url_page('connexion')) ?>"<?= attribut_page_active('connexion') ?>>
                         <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i> Connexion
@@ -121,7 +126,7 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
 
             <!-- Menu repliable -->
             <div class="collapse navbar-collapse" id="menu-principal">
-                <ul class="navbar-nav ms-xl-4 me-xl-3">
+                <ul class="navbar-nav sm-nav-centre">
                     <li class="nav-item">
                         <a class="nav-link" href="<?= e(url()) ?>"<?= attribut_page_active('accueil') ?>>
                             <i class="bi bi-house d-xl-none" aria-hidden="true"></i> Accueil
@@ -162,55 +167,10 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
                     </li>
                 </ul>
 
-                <!-- Compte (utilisateur connecté) : notifications + menu du compte.
-                     Visiteur : bouton « Connexion » à droite de l'en-tête ; l'inscription se fait depuis la page de connexion. -->
+                <!-- Compte (utilisateur connecté), téléphone : dans le menu burger (dès 992 px : à droite de l'en-tête) -->
                 <?php if ($utilisateur_entete !== null): ?>
-                    <div class="sm-actions-compte d-flex flex-column flex-xl-row gap-2 mt-2 mt-xl-0">
-                        <div class="d-flex gap-2">
-                            <!-- Notifications dans le site (§22.1) : pastille = nombre réel de non lues -->
-                            <a class="sm-bouton-carre sm-bouton-carre--or flex-shrink-0" href="<?= e(url_page('notifications')) ?>"
-                               aria-label="Notifications<?= $notifications_non_lues > 0 ? ' : ' . e($notifications_non_lues) . ' non lue' . ($notifications_non_lues > 1 ? 's' : '') : '' ?>"
-                               title="Notifications"<?= attribut_page_active('notifications') ?>>
-                                <i class="bi bi-bell-fill" aria-hidden="true"></i>
-                                <?php if ($notifications_non_lues > 0): ?>
-                                    <span class="sm-pastille" aria-hidden="true"><?= e($notifications_non_lues > 99 ? '99+' : $notifications_non_lues) ?></span>
-                                <?php endif; ?>
-                            </a>
-
-                            <!-- Menu du compte : prénom + entrées selon le rôle -->
-                            <div class="dropdown flex-grow-1">
-                                <button class="btn btn-or dropdown-toggle sm-bouton-compte w-100" type="button"
-                                        data-bs-toggle="dropdown" aria-expanded="false"
-                                        aria-label="Menu du compte de <?= e($utilisateur_entete['prenom']) ?>">
-                                    <?= e($utilisateur_entete['prenom']) ?>
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end sm-menu-compte">
-                                    <li class="sm-menu-compte__entete" aria-hidden="true">
-                                        <span class="sm-avatar"><?= e($initiales_entete) ?></span>
-                                        <span>
-                                            <span class="sm-menu-compte__nom"><?= e($utilisateur_entete['prenom'] . ' ' . $utilisateur_entete['nom']) ?></span>
-                                            <span class="sm-menu-compte__role"><?= e($role_entete) ?></span>
-                                        </span>
-                                    </li>
-                                    <?php foreach ($menu_compte as [$href_menu, $icone_menu, $libelle_menu, $cle_menu]): ?>
-                                        <li>
-                                            <a class="dropdown-item" href="<?= e($href_menu) ?>"<?= attribut_page_active($cle_menu) ?>>
-                                                <i class="bi <?= e($icone_menu) ?>" aria-hidden="true"></i> <?= e($libelle_menu) ?>
-                                            </a>
-                                        </li>
-                                    <?php endforeach; ?>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <form method="post" action="<?= e(url_page('deconnexion')) ?>">
-                                            <?= champ_csrf() ?>
-                                            <button class="dropdown-item sm-menu-compte__deconnexion" type="submit">
-                                                <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Se déconnecter
-                                            </button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                    <div class="sm-actions-compte d-lg-none mt-2">
+                        <?php require __DIR__ . '/compte_entete.php'; ?>
                     </div>
                 <?php endif; ?>
             </div>

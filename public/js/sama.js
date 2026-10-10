@@ -17,7 +17,8 @@
  *  12. la quantité limitée au stock de la taille choisie (fiche maillot) ;
  *  13. les carrousels de cartes (accueil : derniers maillots) ;
  *  14. le lien de paiement Wave de l'abonnement, qui suit la durée choisie ;
- *  15. la vitrine des maillots à l'affiche de l'accueil (défilement automatique).
+ *  15. la vitrine des maillots à l'affiche de l'accueil (défilement automatique) ;
+ *  16. les notifications flottantes (messages de succès et d'erreur), qui disparaissent seules.
  */
 (function () {
     'use strict';
@@ -441,6 +442,25 @@
             vitrine.addEventListener('focusin', function () { vitrineEnPause = true; });
             vitrine.addEventListener('focusout', function () { vitrineEnPause = false; });
         }
+
+        // 16. Notifications flottantes (messages de succès / d'erreur) : disparition automatique et croix.
+        var fermerNotification = function (toast) {
+            toast.classList.add('sm-toast--sortie');
+            window.setTimeout(function () {
+                toast.remove();
+            }, 300);
+        };
+        document.querySelectorAll('[data-toast]').forEach(function (toast) {
+            var duree = parseInt(toast.getAttribute('data-toast-duree'), 10);
+            var minuterie = duree > 0 ? window.setTimeout(function () { fermerNotification(toast); }, duree) : null;
+            // Survol ou clavier : le message reste le temps de le lire.
+            toast.addEventListener('mouseenter', function () { window.clearTimeout(minuterie); });
+            toast.addEventListener('focusin', function () { window.clearTimeout(minuterie); });
+            var bouton = toast.querySelector('[data-toast-fermer]');
+            if (bouton) {
+                bouton.addEventListener('click', function () { fermerNotification(toast); });
+            }
+        });
 
         // 11. Commande via WhatsApp : ouverture automatique de la discussion (le bouton reste en secours).
         var ouvertureAuto = document.querySelector('[data-ouverture-auto]');
