@@ -105,7 +105,13 @@ $liens_nav_basse = [
     </ul>
 </nav>
 
-<!-- Retour en haut : apparaît après avoir fait défiler la page (sama.js, 10) -->
+<!-- Clair / sombre : bouton rond flottant en bas à droite (sama.js, 1) ; aria-pressed="true" en mode sombre -->
+<button class="sm-theme-flottant" type="button" data-bascule-theme aria-label="Mode sombre" aria-pressed="false" title="Passer en mode sombre">
+    <i class="bi bi-moon-fill sm-icone-lune" aria-hidden="true"></i>
+    <i class="bi bi-sun-fill sm-icone-soleil" aria-hidden="true"></i>
+</button>
+
+<!-- Retour en haut : apparaît après avoir fait défiler la page (sama.js, 10), au-dessus du bouton thème -->
 <button class="sm-haut-de-page" type="button" data-haut-de-page hidden aria-label="Revenir en haut de la page" title="Revenir en haut">
     <i class="bi bi-arrow-up" aria-hidden="true"></i>
 </button>

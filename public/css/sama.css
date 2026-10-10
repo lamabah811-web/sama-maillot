@@ -1077,7 +1077,7 @@ h1, h2, h3 {
 .sm-haut-de-page {
     position: fixed;
     right: 1rem;
-    bottom: calc(58px + 1rem + env(safe-area-inset-bottom, 0px));
+    bottom: calc(58px + 4.75rem + env(safe-area-inset-bottom, 0px));
     z-index: 1029;
     display: inline-flex;
     align-items: center;
@@ -1121,7 +1121,7 @@ h1, h2, h3 {
 @media (min-width: 992px) {
     .sm-haut-de-page {
         right: 1.5rem;
-        bottom: 1.5rem;
+        bottom: 5.25rem;
     }
 }
 
@@ -5529,8 +5529,12 @@ a.sm-alerte-admin:hover {
         padding-bottom: calc(58px + 4.25rem + env(safe-area-inset-bottom, 0px));
     }
 
-    body:has(.sm-barre-achat) .sm-haut-de-page {
+    body:has(.sm-barre-achat) .sm-theme-flottant {
         bottom: calc(58px + 4.25rem + 1rem + env(safe-area-inset-bottom, 0px));
+    }
+
+    body:has(.sm-barre-achat) .sm-haut-de-page {
+        bottom: calc(58px + 4.25rem + 4.75rem + env(safe-area-inset-bottom, 0px));
     }
 }
 
@@ -5829,4 +5833,49 @@ a.sm-alerte-admin:hover {
     background: var(--sm-or-appuye);
     border-color: var(--sm-or-appuye);
     color: var(--sm-sur-or);
+}
+
+/* Clair / sombre : bouton rond flottant en bas à droite (au-dessus de la barre basse sur mobile) */
+.sm-theme-flottant {
+    position: fixed;
+    right: 1rem;
+    bottom: calc(58px + 1rem + env(safe-area-inset-bottom, 0px));
+    z-index: 1029;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    padding: 0;
+    border: 1.5px solid var(--sm-or);
+    border-radius: 50%;
+    background: var(--sm-noir);
+    color: var(--sm-or);
+    font-size: 1.2rem;
+    box-shadow: var(--sm-ombre-forte);
+    transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.sm-theme-flottant:hover {
+    transform: scale(1.06) rotate(-12deg);
+    background: var(--sm-or);
+    color: var(--sm-sur-or);
+}
+
+.sm-theme-flottant:focus-visible {
+    outline: 2px solid var(--sm-anneau-focus);
+    outline-offset: 3px;
+}
+
+@media (min-width: 992px) {
+    .sm-theme-flottant {
+        right: 1.5rem;
+        bottom: 1.5rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sm-theme-flottant {
+        transition: none;
+    }
 }

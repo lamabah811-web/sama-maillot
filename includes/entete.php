@@ -70,8 +70,9 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
     <!--
         Barre de navigation :
         - ordinateur (≥ 1200 px) : logo | Accueil, Catalogue, À propos, Contact |
-          Connexion, Inscription (ou notifications + menu du compte) | loupe | thème | panier ;
-        - mobile et tablette : burger | logo | loupe | thème | panier.
+          Connexion, Inscription (ou notifications + menu du compte) | loupe | panier ;
+        - mobile et tablette : burger | logo | loupe | panier.
+        Le choix clair / sombre est un bouton rond flottant en bas à droite (pied_de_page.php).
         La loupe ouvre la barre de recherche juste sous l'en-tête (et la referme).
     -->
     <nav class="navbar navbar-expand-xl py-2" aria-label="Navigation principale">
@@ -91,7 +92,7 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
                 <span class="sm-logo__sama">SAMA</span>&nbsp;<span class="sm-logo__maillot">MAILLOT</span>
             </a>
 
-            <!-- Boutons carrés toujours visibles : recherche, thème puis panier -->
+            <!-- Boutons carrés toujours visibles : recherche puis panier (thème : bouton flottant, pied de page) -->
             <div class="d-flex align-items-center gap-1 gap-sm-2 order-xl-last">
                 <!-- Loupe : ouvre / referme la barre de recherche sous l'en-tête -->
                 <button type="button" class="sm-bouton-carre sm-bouton-carre--or sm-bouton-recherche" data-bs-toggle="collapse"
@@ -99,13 +100,6 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
                         aria-label="Rechercher un maillot" title="Rechercher">
                     <i class="bi bi-search sm-icone-loupe" aria-hidden="true"></i>
                     <i class="bi bi-x-lg sm-icone-fermer" aria-hidden="true"></i>
-                </button>
-
-                <!-- Bascule clair / sombre : aria-pressed="true" quand le mode sombre est actif -->
-                <button type="button" class="sm-bouton-carre" data-bascule-theme
-                        aria-label="Mode sombre" aria-pressed="false" title="Passer en mode sombre">
-                    <i class="bi bi-moon-fill sm-icone-lune" aria-hidden="true"></i>
-                    <i class="bi bi-sun-fill sm-icone-soleil" aria-hidden="true"></i>
                 </button>
 
                 <a class="sm-bouton-carre sm-bouton-carre--or" href="<?= e(url_page('panier')) ?>"
