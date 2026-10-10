@@ -5800,3 +5800,33 @@ a.sm-alerte-admin:hover {
 .sm-visuel--pause * {
     animation-play-state: paused !important;
 }
+
+/* Recherche : loupe dans l'en-tête, barre repliable juste en dessous */
+.sm-bouton-recherche .sm-icone-fermer,
+.sm-bouton-recherche[aria-expanded="true"] .sm-icone-loupe {
+    display: none;
+}
+
+.sm-bouton-recherche[aria-expanded="true"] .sm-icone-fermer {
+    display: inline-block;
+}
+
+.sm-volet-recherche .sm-recherche-barre {
+    max-width: 44rem;
+    margin-inline: auto;
+}
+
+/* Loupe : carré doré plein, icône sombre (jamais de blanc sur l'or) */
+.sm-bouton-carre.sm-bouton-recherche {
+    background: var(--sm-or);
+    border-color: var(--sm-or);
+    color: var(--sm-sur-or);
+}
+
+.sm-bouton-carre.sm-bouton-recherche:hover,
+.sm-bouton-carre.sm-bouton-recherche:focus-visible,
+.sm-bouton-carre.sm-bouton-recherche[aria-expanded="true"] {
+    background: var(--sm-or-appuye);
+    border-color: var(--sm-or-appuye);
+    color: var(--sm-sur-or);
+}

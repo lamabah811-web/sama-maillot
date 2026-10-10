@@ -5,7 +5,7 @@
  * Ce fichier gère :
  *   1. le bouton de bascule clair / sombre (choix mémorisé dans localStorage) ;
  *   2. le suivi en direct du thème du système tant que le visiteur n'a rien choisi ;
- *   3. le bouton « Recherche » de la barre basse mobile, qui place le curseur dans la recherche ;
+ *   3. la loupe de l'en-tête et le bouton « Recherche » de la barre basse, qui ouvrent la recherche ;
  *   4. le bouton œil des champs mot de passe (afficher / masquer) ;
  *   5. l'ouverture des menus déroulants au survol sur ordinateur ;
  *   6. l'ombre de l'en-tête quand la page défile ;
@@ -478,17 +478,36 @@
             });
         });
 
-        // 3. « Recherche » dans la barre basse : focus sur le champ de recherche visible.
-        document.querySelectorAll('[data-aller-recherche]').forEach(function (lien) {
-            lien.addEventListener('click', function (evenement) {
-                var champ = document.getElementById('recherche-mobile');
-                if (champ && champ.offsetParent !== null) {
-                    evenement.preventDefault();
-                    window.scrollTo({ top: 0 });
-                    champ.focus();
+        // 3. Recherche : la loupe de l'en-tête ouvre la barre sous l'en-tête (curseur placé dans le champ,
+        //    Échap la referme) ; « Recherche » dans la barre basse (mobile) l'ouvre aussi.
+        var voletRecherche = document.getElementById('volet-recherche');
+        var champRecherche = document.getElementById('champ-recherche');
+        if (voletRecherche && champRecherche && window.bootstrap) {
+            var repliRecherche = window.bootstrap.Collapse.getOrCreateInstance(voletRecherche, { toggle: false });
+            voletRecherche.addEventListener('shown.bs.collapse', function () {
+                champRecherche.focus();
+            });
+            voletRecherche.addEventListener('keydown', function (evenement) {
+                if (evenement.key === 'Escape') {
+                    repliRecherche.hide();
+                    var loupe = document.querySelector('[data-bs-target="#volet-recherche"]');
+                    if (loupe) {
+                        loupe.focus();
+                    }
                 }
             });
-        });
+            document.querySelectorAll('[data-aller-recherche]').forEach(function (lien) {
+                lien.addEventListener('click', function (evenement) {
+                    evenement.preventDefault();
+                    window.scrollTo({ top: 0 });
+                    if (voletRecherche.classList.contains('show')) {
+                        champRecherche.focus();
+                    } else {
+                        repliRecherche.show();
+                    }
+                });
+            });
+        }
     });
 
     // 2. Le visiteur n'a rien choisi : on suit le système en direct (ex. mode nuit automatique).

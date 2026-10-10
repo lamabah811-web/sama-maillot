@@ -69,9 +69,10 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
 <header class="sm-entete sticky-top">
     <!--
         Barre de navigation :
-        - ordinateur (≥ 1200 px) : logo | Accueil, Catalogue, À propos, Contact | recherche |
-          Connexion, Inscription (ou notifications + menu du compte) | thème | panier ;
-        - mobile et tablette : burger | logo | thème | panier, puis recherche dessous.
+        - ordinateur (≥ 1200 px) : logo | Accueil, Catalogue, À propos, Contact |
+          Connexion, Inscription (ou notifications + menu du compte) | loupe | thème | panier ;
+        - mobile et tablette : burger | logo | loupe | thème | panier.
+        La loupe ouvre la barre de recherche juste sous l'en-tête (et la referme).
     -->
     <nav class="navbar navbar-expand-xl py-2" aria-label="Navigation principale">
         <div class="container gap-1 gap-sm-2">
@@ -90,8 +91,16 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
                 <span class="sm-logo__sama">SAMA</span>&nbsp;<span class="sm-logo__maillot">MAILLOT</span>
             </a>
 
-            <!-- Boutons carrés toujours visibles : thème puis panier -->
+            <!-- Boutons carrés toujours visibles : recherche, thème puis panier -->
             <div class="d-flex align-items-center gap-1 gap-sm-2 order-xl-last">
+                <!-- Loupe : ouvre / referme la barre de recherche sous l'en-tête -->
+                <button type="button" class="sm-bouton-carre sm-bouton-carre--or sm-bouton-recherche" data-bs-toggle="collapse"
+                        data-bs-target="#volet-recherche" aria-controls="volet-recherche" aria-expanded="false"
+                        aria-label="Rechercher un maillot" title="Rechercher">
+                    <i class="bi bi-search sm-icone-loupe" aria-hidden="true"></i>
+                    <i class="bi bi-x-lg sm-icone-fermer" aria-hidden="true"></i>
+                </button>
+
                 <!-- Bascule clair / sombre : aria-pressed="true" quand le mode sombre est actif -->
                 <button type="button" class="sm-bouton-carre" data-bascule-theme
                         aria-label="Mode sombre" aria-pressed="false" title="Passer en mode sombre">
@@ -150,22 +159,6 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
                         </a>
                     </li>
                 </ul>
-
-                <!-- Recherche (ordinateur) : champ + bouton or accolé -->
-                <form class="sm-recherche-barre flex-grow-1 d-none d-xl-flex me-xl-3" role="search"
-                      action="<?= e(url_page('recherche')) ?>" method="get">
-                    <?php if (!page_existe('recherche')): ?>
-                        <input type="hidden" name="page" value="recherche">
-                    <?php endif; ?>
-                    <div class="input-group">
-                        <label class="visually-hidden" for="recherche-entete">Rechercher un maillot</label>
-                        <input class="form-control" type="search" id="recherche-entete" name="q"
-                               placeholder="Rechercher un maillot…" maxlength="100" autocomplete="off">
-                        <button class="btn btn-or sm-recherche-barre__bouton" type="submit" aria-label="Rechercher">
-                            <i class="bi bi-search" aria-hidden="true"></i>
-                        </button>
-                    </div>
-                </form>
 
                 <!-- Compte : Connexion / Inscription, ou notifications + menu du compte -->
                 <div class="sm-actions-compte d-flex flex-column flex-xl-row gap-2 mt-2 mt-xl-0">
@@ -228,21 +221,23 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
         </div>
     </nav>
 
-    <!-- Recherche (mobile et tablette) : toujours visible sous la barre du haut (§10.2) -->
-    <div class="container pb-2 d-xl-none">
-        <form class="sm-recherche-barre" role="search" action="<?= e(url_page('recherche')) ?>" method="get">
-            <?php if (!page_existe('recherche')): ?>
-                <input type="hidden" name="page" value="recherche">
-            <?php endif; ?>
-            <div class="input-group">
-                <label class="visually-hidden" for="recherche-mobile">Rechercher un maillot</label>
-                <input class="form-control" type="search" id="recherche-mobile" name="q"
-                       placeholder="Rechercher un maillot…" maxlength="100" autocomplete="off" enterkeyhint="search">
-                <button class="btn btn-or sm-recherche-barre__bouton" type="submit" aria-label="Rechercher">
-                    <i class="bi bi-search" aria-hidden="true"></i>
-                </button>
-            </div>
-        </form>
+    <!-- Barre de recherche (§10.2) : s'ouvre sous l'en-tête avec la loupe -->
+    <div class="collapse sm-volet-recherche" id="volet-recherche">
+        <div class="container pb-3 pt-1">
+            <form class="sm-recherche-barre" role="search" action="<?= e(url_page('recherche')) ?>" method="get">
+                <?php if (!page_existe('recherche')): ?>
+                    <input type="hidden" name="page" value="recherche">
+                <?php endif; ?>
+                <div class="input-group">
+                    <label class="visually-hidden" for="champ-recherche">Rechercher un maillot</label>
+                    <input class="form-control" type="search" id="champ-recherche" name="q"
+                           placeholder="Rechercher un maillot…" maxlength="100" autocomplete="off" enterkeyhint="search">
+                    <button class="btn btn-or sm-recherche-barre__bouton" type="submit" aria-label="Rechercher">
+                        <i class="bi bi-search" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 </header>
 
