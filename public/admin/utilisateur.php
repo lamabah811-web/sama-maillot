@@ -93,6 +93,7 @@ require __DIR__ . '/../../includes/admin_entete.php';
             <h1 class="sm-titre-section mb-0 mx-2"><?= e($cible['prenom'] . ' ' . $cible['nom']) ?></h1>
             <?= badge_statut(STATUTS_UTILISATEUR, $cible['statut']) ?>
             <span class="badge text-bg-light border"><?= e($cible['role_libelle']) ?></span>
+            <?php if ((int) $cible['est_invite'] === 1): ?><span class="badge text-bg-light border">Commande sans compte</span><?php endif; ?>
         </div>
 
         <?= alerte_formulaire($erreurs) ?>

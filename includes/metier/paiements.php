@@ -292,7 +292,7 @@ function confirmer_commandes_payees(array $transaction): void
             'vendeur/commande.php?id=' . (int) $commande['id']);
         notifier((int) $commande['client_id'], 'paiement_recu', "Paiement reçu : commande $numero",
             format_fcfa((int) $commande['total']) . ' payés en ligne. Votre code de livraison est dans la commande : donnez-le seulement à la réception.',
-            'compte/commande.php?id=' . (int) $commande['id']);
+            lien_commande_client($commande));
     }
 }
 

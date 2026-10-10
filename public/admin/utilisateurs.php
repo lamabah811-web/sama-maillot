@@ -68,9 +68,9 @@ require __DIR__ . '/../../includes/admin_entete.php';
                                         <span class="d-block small text-body-secondary"><i class="bi bi-shop" aria-hidden="true"></i> <?= e($u['boutique_nom']) ?></span>
                                     <?php endif; ?>
                                 </td>
-                                <td><?= e(ucfirst($u['role'])) ?></td>
+                                <td><?= e(ucfirst($u['role'])) ?><?php if ((int) $u['est_invite'] === 1): ?> <span class="badge text-bg-light border">Sans compte</span><?php endif; ?></td>
                                 <td class="small">
-                                    <?= e($u['email']) ?>
+                                    <?= email_technique($u['email']) ? '<span class="text-body-secondary">Pas d\'e-mail</span>' : e($u['email']) ?>
                                     <?php if ($u['telephone'] !== null): ?><span class="d-block text-body-secondary"><?= e(formater_telephone($u['telephone'])) ?></span><?php endif; ?>
                                 </td>
                                 <td>

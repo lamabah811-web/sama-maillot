@@ -266,7 +266,7 @@ require __DIR__ . '/../../includes/entete.php';
                                     <i class="bi bi-lock" aria-hidden="true"></i> Commander
                                 </a>
                                 <?php if ($utilisateur === null): ?>
-                                    <p class="small text-body-secondary text-center mt-2 mb-0">Vous vous connecterez à l'étape suivante.</p>
+                                    <p class="small text-body-secondary text-center mt-2 mb-0">Pas besoin de compte : votre nom et votre numéro suffisent.</p>
                                 <?php endif; ?>
                             <?php else: ?>
                                 <button class="btn btn-or btn-lg w-100" type="button" disabled>Commander</button>

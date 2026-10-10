@@ -49,6 +49,7 @@ INSERT IGNORE INTO roles (id, code, libelle, description) VALUES
 CREATE TABLE IF NOT EXISTS utilisateurs (
     id                    INT UNSIGNED NOT NULL AUTO_INCREMENT,
     role                  VARCHAR(20)  NOT NULL COMMENT 'client, vendeur ou admin (voir table roles)',
+    est_invite            TINYINT(1)   NOT NULL DEFAULT 0 COMMENT '1 = compte créé par une commande sans compte',
     prenom                VARCHAR(50)  NOT NULL,
     nom                   VARCHAR(50)  NOT NULL,
     email                 VARCHAR(190) NOT NULL,
@@ -569,6 +570,8 @@ CREATE TABLE IF NOT EXISTS commandes (
     delai_livraison         VARCHAR(40)  NOT NULL DEFAULT '',
     client_nom              VARCHAR(101) NOT NULL,
     telephone_client        VARCHAR(13)  NOT NULL,
+    email_client            VARCHAR(190) NULL COMMENT 'E-mail donné à la commande (facultatif, commande sans compte)',
+    jeton_suivi_chiffre     VARCHAR(255) NULL COMMENT 'Lien de suivi d''une commande sans compte (chiffré)',
     adresse_ville           VARCHAR(60)  NOT NULL DEFAULT '',
     adresse_quartier        VARCHAR(80)  NOT NULL DEFAULT '',
     adresse_repere          VARCHAR(160) NOT NULL DEFAULT '',

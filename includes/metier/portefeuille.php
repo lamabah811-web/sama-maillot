@@ -179,7 +179,7 @@ function marquer_rembourse(array $admin, int $remboursementId, string $reference
         return 'Ce remboursement est déjà enregistré.';
     }
 
-    $lecture = bdd()->prepare('SELECT r.*, c.numero, c.statut FROM remboursements r JOIN commandes c ON c.id = r.commande_id WHERE r.id = :id');
+    $lecture = bdd()->prepare('SELECT r.*, c.numero, c.statut, c.jeton_suivi_chiffre FROM remboursements r JOIN commandes c ON c.id = r.commande_id WHERE r.id = :id');
     $lecture->execute(['id' => $remboursementId]);
     $remboursement = $lecture->fetch();
 
@@ -189,7 +189,7 @@ function marquer_rembourse(array $admin, int $remboursementId, string $reference
     journaliser_action('admin_remboursement', (int) $admin['id'], 'commande', (int) $remboursement['commande_id'], null, $reference);
     notifier((int) $remboursement['client_id'], 'remboursement_effectue', 'Commande ' . $remboursement['numero'] . ' remboursée',
         format_fcfa((int) $remboursement['montant']) . ' vous ont été remboursés (référence ' . $reference . ').',
-        'compte/commande.php?id=' . (int) $remboursement['commande_id']);
+        lien_commande_client(['id' => $remboursement['commande_id'], 'jeton_suivi_chiffre' => $remboursement['jeton_suivi_chiffre']]));
 
     return null;
 }

@@ -86,21 +86,32 @@ class ErreurCommande extends RuntimeException
 
 /**
  * Peut-il encore commander en paiement à la livraison ? (§12.5) Renvoie null ou le motif du refus.
+ * Commande sans compte ($client null ou invité) : les limites s'appliquent au NUMÉRO DE TÉLÉPHONE.
  */
-function refus_paiement_livraison(array $client, int $nouvellesCommandes): ?string
+function refus_paiement_livraison(?array $client, int $nouvellesCommandes, ?string $telephone = null): ?string
 {
     $refusMax = max(1, (int) parametre('refus_livraison_avant_blocage', '3'));
-    if ((int) ($client['refus_livraison'] ?? 0) >= $refusMax) {
-        return 'Le paiement à la livraison n\'est plus disponible sur votre compte (plusieurs refus à la livraison). '
+    $parTelephone = ($client === null || !empty($client['est_invite'])) && $telephone !== null && $telephone !== '';
+
+    if ($parTelephone) {
+        $requete = bdd()->prepare("SELECT COUNT(*) FROM commandes WHERE telephone_client = :tel AND motif_annulation = 'Client injoignable ou refus à la livraison'");
+        $requete->execute(['tel' => $telephone]);
+        $refus = (int) $requete->fetchColumn();
+    } else {
+        $refus = (int) ($client['refus_livraison'] ?? 0);
+    }
+    if ($refus >= $refusMax) {
+        return 'Le paiement à la livraison n\'est plus disponible ' . ($parTelephone ? 'pour ce numéro' : 'sur votre compte')
+            . ' (plusieurs refus à la livraison). '
             . (paiement_en_ligne_actif() ? 'Choisissez le paiement en ligne.' : 'Le paiement en ligne arrive très prochainement.');
     }
 
     $maximum = max(1, (int) parametre('commandes_livraison_simultanees', '3'));
     $place = implode(',', array_fill(0, count(STATUTS_COMMANDE_EN_COURS), '?'));
     $requete = bdd()->prepare(
-        "SELECT COUNT(*) FROM commandes WHERE client_id = ? AND mode_paiement = 'livraison' AND statut IN ($place)"
+        'SELECT COUNT(*) FROM commandes WHERE ' . ($parTelephone ? 'telephone_client' : 'client_id') . " = ? AND mode_paiement = 'livraison' AND statut IN ($place)"
     );
-    $requete->execute([$client['id'], ...STATUTS_COMMANDE_EN_COURS]);
+    $requete->execute([$parTelephone ? $telephone : ($client['id'] ?? 0), ...STATUTS_COMMANDE_EN_COURS]);
     $enCours = (int) $requete->fetchColumn();
 
     if ($enCours + $nouvellesCommandes > $maximum) {
@@ -138,6 +149,10 @@ function creer_commandes(array $client, array $articles, array $adresse, array $
         throw new ErreurCommande('Le paiement en ligne n\'est pas disponible pour le moment.');
     }
     $pourcentageFrais = max(0.0, (float) str_replace(',', '.', parametre('frais_transaction_pourcentage', '0')));
+    // Commande sans compte : un lien de suivi secret commun aux commandes de ce panier, e-mail recopié.
+    $invite = !empty($client['est_invite']);
+    $jetonSuivi = $invite ? nouveau_jeton_suivi() : null;
+    $emailClient = $invite && !email_technique((string) $client['email']) ? (string) $client['email'] : null;
 
     $pdo = bdd();
     $pdo->beginTransaction();
@@ -207,7 +222,7 @@ function creer_commandes(array $client, array $articles, array $adresse, array $
         }
 
         // 2. Limites du paiement à la livraison (§12.5) ; le paiement en ligne n'y est pas soumis
-        if (!$enLigne && ($motif = refus_paiement_livraison($client, count($groupes)))) {
+        if (!$enLigne && ($motif = refus_paiement_livraison($client, count($groupes), $adresse['telephone'] ?? null))) {
             throw new ErreurCommande($motif);
         }
 
@@ -217,11 +232,11 @@ function creer_commandes(array $client, array $articles, array $adresse, array $
                                    frais_livraison, frais_a_convenir, total, frais_transaction, montant_vendeur,
                                    mode_livraison, zone_id, zone_nom, delai_livraison,
                                    client_nom, telephone_client, adresse_ville, adresse_quartier, adresse_repere,
-                                   adresse_retrait, code_livraison_chiffre)
+                                   adresse_retrait, code_livraison_chiffre, email_client, jeton_suivi_chiffre)
              VALUES (:numero, :client, :boutique, :origine, :mode_paiement, :statut, :sous_total,
                      :frais, :a_convenir, :total, :frais_transaction, :montant_vendeur,
                      :mode, :zone, :zone_nom, :delai,
-                     :client_nom, :telephone, :ville, :quartier, :repere, :adresse_retrait, :code)"
+                     :client_nom, :telephone, :ville, :quartier, :repere, :adresse_retrait, :code, :email_client, :jeton_suivi)"
         );
         $insertionLigne = $pdo->prepare(
             'INSERT INTO commande_lignes (commande_id, maillot_id, titre, image, taille, flocage_nom, flocage_numero,
@@ -283,6 +298,8 @@ function creer_commandes(array $client, array $articles, array $adresse, array $
                 'repere' => $mode === 'livraison' ? $adresse['repere'] : '',
                 'adresse_retrait' => $mode === 'retrait' ? (string) $boutique['adresse_retrait'] : '',
                 'code' => $code !== null ? chiffrer($code) : null,
+                'email_client' => $emailClient,
+                'jeton_suivi' => $jetonSuivi !== null ? chiffrer($jetonSuivi) : null,
             ]);
             $id = (int) $pdo->lastInsertId();
             $numero = sprintf('CMD-%s-%06d', date('Y'), $id);
@@ -305,6 +322,7 @@ function creer_commandes(array $client, array $articles, array $adresse, array $
                 $origine === 'whatsapp' ? 'Commande via WhatsApp' : ($enLigne ? 'Paiement en ligne en cours' : null));
 
             $creees[] = ['id' => $id, 'numero' => $numero, 'code' => $code, 'boutique_id' => $boutiqueId,
+                'lien' => $jetonSuivi !== null ? 'commande/suivi.php?c=' . $id . '&j=' . $jetonSuivi : 'compte/commande.php?id=' . $id,
                 'total' => $total, 'vendeur_id' => (int) $boutique['vendeur_id'],
                 'a_convenir' => $tarif['a_convenir']];
         }
@@ -340,7 +358,7 @@ function creer_commandes(array $client, array $articles, array $adresse, array $
             'vendeur/commande.php?id=' . $commande['id']);
         notifier((int) $client['id'], 'commande_enregistree', 'Commande ' . $commande['numero'] . ' enregistrée',
             'Le vendeur doit la confirmer, puis il vous appellera pour la livraison.',
-            'compte/commande.php?id=' . $commande['id']);
+            $commande['lien']);
     }
 
     return $creees;
@@ -618,7 +636,7 @@ function prevenir_changement_statut(array $commande, string $nouveau, string $ro
     $client = (string) $commande['telephone_client'];
     $clientId = (int) $commande['client_id'];
     $vendeurId = (int) boutique_proprietaire((int) $commande['boutique_id']);
-    $lienClient = 'compte/commande.php?id=' . (int) $commande['id'];
+    $lienClient = lien_commande_client($commande);
     $lienVendeur = 'vendeur/commande.php?id=' . (int) $commande['id'];
 
     switch ($nouveau) {

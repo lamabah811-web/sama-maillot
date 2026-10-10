@@ -11,10 +11,17 @@
  * commande n'est pas créée et le client revoit le nouveau récapitulatif.
  *
  * Paiement en ligne : commandes « en attente de paiement » (stock réservé), puis page de l'agrégateur.
+ *
+ * Sans compte : le visiteur donne aussi son nom complet et, s'il le veut, son e-mail ; un compte
+ * invité est créé à la confirmation et il suit sa commande par un lien secret (metier/invites.php).
  */
 require __DIR__ . '/../../includes/config.php';
 
-$utilisateur = exiger_connexion();
+// Connexion facultative : un visiteur commande avec son nom complet, son téléphone et (facultatif) son e-mail.
+$utilisateur = utilisateur_connecte();
+$invite = $utilisateur === null;
+// Pour un visiteur, les fonctions d'adresse reçoivent un « client » vide (pas d'adresses enregistrées).
+$client_adresse = $utilisateur ?? ['id' => 0, 'telephone' => null];
 
 if (!peut_acheter($utilisateur)) {
     message_flash('erreur', 'Un compte administrateur ne peut pas passer de commande.');
@@ -31,11 +38,11 @@ if (array_filter($lignes, static fn (array $l): bool => $l['probleme'] !== null)
 }
 
 $groupes = panier_par_boutique($lignes);
-$adresses = adresses_du_client((int) $utilisateur['id']);
+$adresses = $invite ? [] : adresses_du_client((int) $utilisateur['id']);
 $choix = $_SESSION['commande_en_cours'] ?? null;
 $etape = ($_GET['etape'] ?? '') === 'recap' && is_array($choix) ? 'recap' : 'adresse';
 $erreurs = [];
-$valeurs = is_array($choix) ? $choix['adresse'] : [];
+$valeurs = is_array($choix) ? $choix['adresse'] + ($choix['identite'] ?? []) : [];
 
 /**
  * Frais et mode de livraison de chaque boutique pour l'adresse choisie.
@@ -83,11 +90,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($action === 'adresse') {
         // ---- Étape 1 → 2 ----
-        [$adresse, $erreurs] = lire_adresse_post($utilisateur);
-        $valeurs = $adresse + ['adresse_id' => champ_post('adresse_id')];
+        [$adresse, $erreurs] = lire_adresse_post($client_adresse);
+        $identite = null;
+        if ($invite) {
+            [$identite, $erreursIdentite] = lire_identite_invite();
+            $erreurs = $erreursIdentite + $erreurs;
+        }
+        $valeurs = $adresse + ($identite ?? []) + ['adresse_id' => champ_post('adresse_id')];
 
         if ($erreurs === []) {
-            $_SESSION['commande_en_cours'] = ['adresse' => $adresse, 'modes' => []];
+            $_SESSION['commande_en_cours'] = ['adresse' => $adresse, 'modes' => [], 'identite' => $identite];
             $_SESSION['zone_livraison'] = $adresse['zone_id'];
             rediriger('panier/commander.php?etape=recap');
         }
@@ -113,8 +125,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             rediriger('panier/commander.php?etape=recap');
         }
 
+        // Visiteur : plafond anti-abus, puis compte invité (rattache la commande, suivi par lien secret).
+        if ($invite) {
+            if (trop_de_commandes_invite()) {
+                message_flash('erreur', 'Trop de commandes sans compte depuis votre connexion. Réessayez dans une heure ou créez un compte.');
+                rediriger('panier/commander.php?etape=recap');
+            }
+            if (empty($choix['identite'])) {
+                rediriger('panier/commander.php');
+            }
+        }
+
         // Téléphone vérifié par SMS avant la première commande (§12.1), si la vérification est active.
-        if (VERIFICATION_SMS && $utilisateur['telephone_verifie_le'] === null) {
+        if (!$invite && VERIFICATION_SMS && $utilisateur['telephone_verifie_le'] === null) {
             demarrer_verification_telephone($utilisateur, $choix['adresse']['telephone'], 'panier/commander.php?etape=recap');
         }
 
@@ -124,14 +147,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ], $lignes);
         $modes = array_map(static fn (array $l): string => $l['mode'], $livraisons);
 
+        $client = $invite ? compte_invite($choix['identite']['nom_complet'], $choix['identite']['email']) : $utilisateur;
+
         try {
-            $creees = creer_commandes($utilisateur, $articles, $choix['adresse'], $modes, 'site', $paiement);
+            $creees = creer_commandes($client, $articles, $choix['adresse'], $modes, 'site', $paiement);
         } catch (ErreurCommande $exception) {
+            // Commande refusée (stock, limite…) : un compte invité tout juste créé et resté sans commande est retiré.
+            if ($invite) {
+                bdd()->prepare('DELETE FROM utilisateurs WHERE id = :id AND est_invite = 1 AND NOT EXISTS (SELECT 1 FROM commandes WHERE client_id = :id2)')
+                    ->execute(['id' => $client['id'], 'id2' => $client['id']]);
+            }
             message_flash('erreur', $exception->getMessage());
             rediriger($paiement === 'en_ligne' ? 'panier/commander.php?etape=recap' : 'panier/');
         }
 
-        memoriser_adresse((int) $utilisateur['id'], $choix['adresse']);
+        if (!$invite) {
+            memoriser_adresse((int) $utilisateur['id'], $choix['adresse']);
+        } else {
+            // Le visiteur pourra revenir sur la page de paiement (retour de l'agrégateur) dans cette session.
+            $_SESSION['client_invite_id'] = (int) $client['id'];
+        }
         foreach ($lignes as $ligne) {
             supprimer_ligne_panier((int) $ligne['id']);
         }
@@ -139,14 +174,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Paiement en ligne : le stock est réservé, le client part payer sur la page de l'agrégateur.
         if ($paiement === 'en_ligne') {
-            aller_vers_paiement(creer_paiement($utilisateur, $creees));
+            aller_vers_paiement(creer_paiement($client, $creees));
         }
 
         $numeros = implode(', ', array_column($creees, 'numero'));
         message_flash('succes', count($creees) > 1
             ? 'Merci ! Vos ' . count($creees) . ' commandes sont enregistrées (' . $numeros . '). Chaque vendeur doit maintenant les confirmer.'
             : 'Merci ! Votre commande ' . $numeros . ' est enregistrée. Le vendeur doit maintenant la confirmer.');
-        rediriger(count($creees) === 1 ? 'compte/commande.php?id=' . $creees[0]['id'] : 'compte/commandes.php');
+        rediriger($invite || count($creees) === 1 ? $creees[0]['lien'] : 'compte/commandes.php');
     }
 }
 
@@ -158,7 +193,7 @@ if ($etape === 'recap') {
     $tout_possible = !in_array(false, array_column($livraisons, 'possible'), true);
     $frais_a_convenir = in_array(true, array_column($livraisons, 'a_convenir'), true);
     $empreinte = empreinte_commande($lignes, $livraisons, $choix['adresse']);
-    $refus_livraison = refus_paiement_livraison($utilisateur, count($groupes));
+    $refus_livraison = refus_paiement_livraison($utilisateur, count($groupes), $choix['adresse']['telephone']);
     // Paiement en ligne : montant connu d'avance (pas de frais « à convenir »).
     $en_ligne_possible = paiement_en_ligne_actif() && !$frais_a_convenir;
     $zone_nom = '';
@@ -195,11 +230,37 @@ require __DIR__ . '/../../includes/entete.php';
                     <div class="sm-tuile">
                         <h1 class="h3 fw-bold mb-1">Où livrer votre commande ?</h1>
                         <p class="text-body-secondary mb-4">Le vendeur vous appellera à ce numéro pour la livraison.</p>
+                        <?php if ($invite): ?>
+                            <p class="sm-encadre-info small mb-4">
+                                <i class="bi bi-person-check" aria-hidden="true"></i>
+                                <strong>Pas besoin de compte</strong> pour commander. Vous avez déjà un compte ?
+                                <a href="<?= e(url_page('connexion')) ?>">Connectez-vous</a> pour retrouver vos adresses.
+                            </p>
+                        <?php endif; ?>
                         <?= alerte_formulaire($erreurs) ?>
                         <form method="post" novalidate>
                             <?= champ_csrf() ?>
                             <input type="hidden" name="action" value="adresse">
-                            <?= champs_adresse($utilisateur, $adresses, $valeurs, $erreurs) ?>
+                            <?php if ($invite): ?>
+                                <!-- Commande sans compte : identité du client (nom complet obligatoire, e-mail facultatif) -->
+                                <div class="row g-3 mb-4">
+                                    <div class="col-12 col-sm-6">
+                                        <label class="form-label fw-semibold" for="nom_complet">Nom complet</label>
+                                        <input class="form-control<?= classe_erreur($erreurs, 'nom_complet') ?>" type="text" id="nom_complet" name="nom_complet"
+                                               maxlength="100" value="<?= e($valeurs['nom_complet'] ?? '') ?>" placeholder="Ex. : Awa Diop"
+                                               autocomplete="name" required <?= aria_erreur($erreurs, 'nom_complet') ?>>
+                                        <?= message_erreur($erreurs, 'nom_complet') ?>
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <label class="form-label fw-semibold" for="email">E-mail <span class="fw-normal text-body-secondary">(facultatif)</span></label>
+                                        <input class="form-control<?= classe_erreur($erreurs, 'email') ?>" type="email" id="email" name="email"
+                                               maxlength="190" value="<?= e($valeurs['email'] ?? '') ?>" placeholder="pour recevoir le suivi"
+                                               autocomplete="email" <?= aria_erreur($erreurs, 'email') ?>>
+                                        <?= message_erreur($erreurs, 'email') ?>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                            <?= champs_adresse($client_adresse, $adresses, $valeurs, $erreurs) ?>
                             <button class="btn btn-or btn-lg w-100 mt-4" type="submit">
                                 Continuer <i class="bi bi-arrow-right" aria-hidden="true"></i>
                             </button>

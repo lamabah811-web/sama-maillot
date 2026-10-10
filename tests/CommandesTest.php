@@ -93,6 +93,45 @@ final class CommandesTest extends TestCase
         creer_commandes($client, [article_test($maillot)], adresse_test(), []);
     }
 
+    public function testCommandeSansCompteEtLienDeSuivi(): void
+    {
+        [, $boutique] = creer_vendeur_test();
+        $client = compte_invite('Awa Diop', '');
+        $adresse = adresse_test();
+        $adresse['telephone'] = '+221771230001';
+
+        self::assertSame(1, (int) $client['est_invite']);
+        self::assertNull($client['mot_de_passe_hache'], 'Un compte invité ne peut pas se connecter.');
+        self::assertTrue(email_technique($client['email']), 'Sans e-mail donné, aucune notification e-mail.');
+
+        $creee = creer_commandes($client, [article_test(creer_maillot_test((int) $boutique['id']))], $adresse, [])[0];
+        $commande = commande_test($creee['id']);
+        self::assertNotNull($commande['jeton_suivi_chiffre']);
+        self::assertStringStartsWith('commande/suivi.php?c=' . $creee['id'] . '&j=', $creee['lien']);
+
+        $jeton = substr($creee['lien'], strpos($creee['lien'], '&j=') + 3);
+        self::assertNotNull(commande_par_suivi((int) $creee['id'], $jeton), 'Le lien de suivi ouvre la commande.');
+        self::assertNull(commande_par_suivi((int) $creee['id'], str_repeat('0', 64)), 'Un autre jeton est refusé.');
+        self::assertSame($creee['lien'], lien_commande_client($commande), 'Les notifications pointent vers le suivi.');
+    }
+
+    public function testLimitesSansCompteParTelephone(): void
+    {
+        [, $boutique] = creer_vendeur_test();
+        $maillot = creer_maillot_test((int) $boutique['id'], 10000, ['M' => 10]);
+        $adresse = adresse_test();
+        $adresse['telephone'] = '+221771230002';
+        $maximum = (int) parametre('commandes_livraison_simultanees', '3');
+
+        // Chaque commande crée un compte invité différent : la limite porte sur le numéro de téléphone.
+        for ($i = 0; $i < $maximum; $i++) {
+            creer_commandes(compte_invite('Client Repete', ''), [article_test($maillot)], $adresse, []);
+        }
+
+        $this->expectException(ErreurCommande::class);
+        creer_commandes(compte_invite('Client Repete', ''), [article_test($maillot)], $adresse, []);
+    }
+
     public function testMatriceDesStatuts(): void
     {
         // Autorisées (§12.4)

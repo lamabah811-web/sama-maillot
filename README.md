@@ -319,6 +319,19 @@ Audit du code (toutes les pages) puis attaques réelles sur le site local, compt
   renouvellement) et la confiance (signalements, suspension automatique, avis). Base séparée
   `sama_maillot_test`, recréée à chaque lancement : la base du site n'est jamais touchée.
 
+## Commander sans compte
+
+- Base existante : importer `sql/migrations/014_commande_sans_compte.sql`.
+- Le visiteur commande **sans s'inscrire** : nom complet (obligatoire), téléphone, adresse et e-mail
+  facultatif. Un « compte invité » (sans mot de passe, impossible de s'y connecter) rattache la commande.
+- **Suivi par lien secret** (`commande/suivi.php?c=…&j=…`, jeton de 64 caractères chiffré en base),
+  affiché après la commande et envoyé par e-mail s'il en a donné un : statut, annulation, réception,
+  WhatsApp du vendeur, paiement en ligne en attente.
+- **Anti-abus** : 3 commandes à la livraison en cours par numéro de téléphone, refus à la livraison
+  comptés par numéro, au plus 5 commandes sans compte par heure et par adresse IP.
+- **Devenir un vrai compte** : « Mot de passe oublié » avec son e-mail ; le compte invité devient un compte
+  normal avec ses commandes (avis et réclamations restent réservés aux comptes).
+
 ## Règles de développement
 
 - Chaque page publique commence par `require __DIR__ . '/../includes/config.php';`

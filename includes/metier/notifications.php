@@ -70,7 +70,7 @@ function notifier(int $utilisateurId, string $type, string $titre, string $messa
         $requete = bdd()->prepare("SELECT email FROM utilisateurs WHERE id = :id AND statut = 'actif'");
         $requete->execute(['id' => $utilisateurId]);
         $email = $requete->fetchColumn();
-        if (is_string($email) && $email !== '') {
+        if (is_string($email) && !email_technique($email)) {   // pas d'e-mail vers un compte invité sans e-mail
             // En local sans SMTP : bandeau « e-mail simulé » seulement si l'e-mail est pour la personne connectée.
             $pourMoi = (int) (utilisateur_connecte()['id'] ?? 0) === $utilisateurId;
             envoyer_email($email, NOM_SITE . ' — ' . $titre, $message, $lien !== null ? url($lien) : null, $pourMoi);

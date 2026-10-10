@@ -181,7 +181,7 @@ function rechercher_utilisateurs(array $filtres, int $page): array
     $page = min(max(1, $page), $pages);
 
     $requete = bdd()->prepare(
-        'SELECT u.id, u.role, u.prenom, u.nom, u.email, u.telephone, u.statut, u.cree_le, u.derniere_connexion_le,
+        'SELECT u.id, u.role, u.est_invite, u.prenom, u.nom, u.email, u.telephone, u.statut, u.cree_le, u.derniere_connexion_le,
                 b.id AS boutique_id, b.nom AS boutique_nom, b.statut AS boutique_statut'
         . $depuis . ' ORDER BY u.cree_le DESC, u.id DESC LIMIT ' . ADMIN_PAR_PAGE . ' OFFSET ' . (($page - 1) * ADMIN_PAR_PAGE)
     );

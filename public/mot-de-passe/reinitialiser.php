@@ -29,7 +29,8 @@ if ($utilisateurId !== null && $_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($motDePasse !== $confirmation) {
         $erreurs['confirmation'] = 'Les deux mots de passe ne sont pas identiques.';
     } else {
-        bdd()->prepare('UPDATE utilisateurs SET mot_de_passe_hache = :hache WHERE id = :id')
+        // Un compte invité (commande sans compte) devient un compte normal : l'e-mail est prouvé par ce lien.
+        bdd()->prepare('UPDATE utilisateurs SET mot_de_passe_hache = :hache, est_invite = 0 WHERE id = :id')
             ->execute(['hache' => password_hash($motDePasse, PASSWORD_DEFAULT), 'id' => $utilisateurId]);
 
         utiliser_lien_reinitialisation($idLien);

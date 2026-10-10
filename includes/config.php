@@ -204,6 +204,7 @@ require_once __DIR__ . '/metier/images.php';
 require_once __DIR__ . '/metier/vendeur.php';
 require_once __DIR__ . '/metier/panier.php';
 require_once __DIR__ . '/metier/commandes.php';
+require_once __DIR__ . '/metier/invites.php';
 require_once __DIR__ . '/metier/notifications.php';
 require_once __DIR__ . '/metier/admin.php';
 require_once __DIR__ . '/metier/signalements.php';

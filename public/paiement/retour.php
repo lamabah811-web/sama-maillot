@@ -7,10 +7,12 @@
  */
 require __DIR__ . '/../../includes/config.php';
 
-$utilisateur = exiger_connexion();
+// Client connecté, ou visiteur ayant commandé sans compte dans cette session.
+$utilisateur = utilisateur_connecte();
+$proprietaire = $utilisateur !== null ? (int) $utilisateur['id'] : (int) ($_SESSION['client_invite_id'] ?? 0);
 
 $transaction = transaction_par_reference(is_string($_GET['ref'] ?? null) ? $_GET['ref'] : '');
-if ($transaction === null || (int) $transaction['client_id'] !== (int) $utilisateur['id']) {
+if ($transaction === null || $proprietaire === 0 || (int) $transaction['client_id'] !== $proprietaire) {
     afficher_erreur(404);
 }
 
@@ -21,7 +23,7 @@ if ($transaction['statut'] === 'initie' || $transaction['statut'] === 'inconnu')
 
 $statut = $transaction['statut'];
 $commandes = commandes_de_la_transaction((int) $transaction['id']);
-$lien_commandes = count($commandes) === 1 ? url('compte/commande.php?id=' . (int) $commandes[0]['id']) : url_page('mes-commandes');
+$lien_commandes = count($commandes) === 1 || $utilisateur === null ? url(lien_commande_client($commandes[0])) : url_page('mes-commandes');
 
 $titre_page = 'Paiement';
 $sans_indexation = true;

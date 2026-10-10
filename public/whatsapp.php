@@ -9,6 +9,7 @@
  *   whatsapp.php?commande=12       → commande via WhatsApp / contacter le vendeur d'une commande
  *                                    (uniquement le client de cette commande)
  *   whatsapp.php?support=1         → support SAMA MAILLOT (paramètre numero_whatsapp_support)
+ *   whatsapp.php?suivi=12&j=…      → vendeur d'une commande sans compte (lien de suivi secret)
  */
 require __DIR__ . '/../includes/config.php';
 
@@ -31,6 +32,13 @@ if (isset($_GET['maillot'])) {
 } elseif (isset($_GET['commande'])) {
     $client = utilisateur_connecte();
     $commande = $client !== null ? commande_du_client((int) $_GET['commande'], (int) $client['id']) : null;
+    if ($commande !== null) {
+        $numero = $commande['boutique_whatsapp'];
+        $message = message_whatsapp_commande($commande, lignes_de_la_commande((int) $commande['id']));
+    }
+} elseif (isset($_GET['suivi'])) {
+    // Commande sans compte : contrôlée par son lien secret
+    $commande = commande_par_suivi((int) $_GET['suivi'], is_string($_GET['j'] ?? null) ? $_GET['j'] : '');
     if ($commande !== null) {
         $numero = $commande['boutique_whatsapp'];
         $message = message_whatsapp_commande($commande, lignes_de_la_commande((int) $commande['id']));
