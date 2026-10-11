@@ -3,7 +3,7 @@
  * SAMA MAILLOT — boutons Google / Facebook au-dessus des formulaires de connexion et d'inscription,
  * côte à côte et en icône seule (logo Google multicolore officiel, « f » de Facebook en or du site),
  * suivis du séparateur « ou ». Le libellé « Continuer avec … » reste lu par les lecteurs d'écran.
- * Un fournisseur inactif n'a pas de bouton (sauf en local, pour voir le rendu : voir fournisseurs_boutons()).
+ * Un fournisseur inactif n'a pas de bouton (aujourd'hui : Google seul, Facebook non configuré).
  * Liens simples vers le serveur (aucun SDK JavaScript). Au clic, sama.js désactive le bouton et
  * affiche un indicateur de chargement (aria-busy) pour éviter le double clic.
  */

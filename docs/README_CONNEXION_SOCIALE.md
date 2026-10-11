@@ -234,8 +234,7 @@ FACEBOOK_URL_RETOUR=
 ```
 
 - `..._ACTIF=false` (ou un identifiant vide) : bouton masqué, pages en 404, aucune erreur visible.
-  Exception en local (`APP_ENV=local`) : les deux boutons restent visibles pour voir le rendu ; un clic
-  sur un fournisseur non configuré affiche « pas encore configurée ».
+  Ainsi, tant que Facebook n'est pas configuré, seul le bouton Google apparaît.
 - `..._URL_RETOUR` vide : adresse calculée à partir de `APP_URL`. Ne la remplissez que si elle doit
   être différente, et alors exactement comme chez Google / Meta.
 - Après un changement de `.env`, rien à redémarrer : la valeur est lue à chaque page.

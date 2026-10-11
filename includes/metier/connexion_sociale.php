@@ -97,14 +97,14 @@ function fournisseurs_actifs(): array
 }
 
 /**
- * Boutons à afficher : les fournisseurs actifs. En local (XAMPP), les deux sont toujours montrés pour
- * voir le rendu ; un bouton non configuré affiche alors un message au lieu de partir chez le fournisseur.
+ * Boutons à afficher : uniquement les fournisseurs actifs (Facebook est masqué tant que
+ * FACEBOOK_ACTIF n'est pas à true avec ses identifiants dans .env).
  *
  * @return list<string>
  */
 function fournisseurs_boutons(): array
 {
-    return EN_PRODUCTION ? fournisseurs_actifs() : array_keys(FOURNISSEURS_SOCIAUX);
+    return fournisseurs_actifs();
 }
 
 /** Pages Google / Facebook : 404 si le fournisseur est inactif ou mal configuré. */
@@ -271,13 +271,6 @@ function demarrer_connexion_sociale(string $fournisseur, string $mode = 'connexi
  */
 function page_depart_sociale(string $fournisseur): never
 {
-    // En local seulement : bouton visible mais fournisseur pas encore configuré → explication.
-    if (!EN_PRODUCTION && isset(FOURNISSEURS_SOCIAUX[$fournisseur]) && !fournisseur_actif($fournisseur)) {
-        message_flash('erreur', 'Connexion ' . nom_fournisseur($fournisseur) . ' pas encore configurée : renseignez '
-            . strtoupper($fournisseur) . '_ACTIF et les identifiants dans .env (guide : docs/README_CONNEXION_SOCIALE.md).');
-        rediriger('connexion/');
-    }
-
     exiger_fournisseur_actif($fournisseur);
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
