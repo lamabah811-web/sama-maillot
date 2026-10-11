@@ -2203,6 +2203,61 @@ h1, h2, h3 {
     display: inline-block;
 }
 
+/* Connexion / inscription : boutons côte à côte, icône seule, aux couleurs du site
+   (surface + bordure du thème, or au survol ; logo Google officiel, « f » Facebook en or) */
+.sm-sociaux--icones {
+    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+}
+
+.sm-bouton-icone-social {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    border: 1px solid var(--sm-bordure);
+    border-radius: var(--sm-rayon-bouton);
+    background: var(--sm-surface);
+    color: var(--sm-or);
+    transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+}
+
+.sm-bouton-icone-social:hover {
+    border-color: var(--sm-or);
+    background: var(--sm-teinte-or);
+    color: var(--sm-or);
+    transform: translateY(-1px);
+}
+
+.sm-bouton-icone-social:focus-visible {
+    outline: 3px solid var(--sm-accent);
+    outline-offset: 2px;
+}
+
+.sm-bouton-icone-social .sm-bouton-social__icone {
+    position: static;
+    width: 22px;
+    height: 22px;
+    transform: none;
+}
+
+/* Après le clic : l'icône laisse place à l'indicateur de chargement */
+.sm-bouton-icone-social[aria-busy="true"] {
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+.sm-bouton-icone-social[aria-busy="true"] .sm-bouton-social__icone {
+    visibility: hidden;
+}
+
+.sm-bouton-icone-social[aria-busy="true"] .sm-bouton-social__attente {
+    display: inline-block;
+    right: auto;
+    left: 50%;
+    margin-left: -0.5rem;
+}
+
 /* « Mes connexions » : une ligne par fournisseur */
 .sm-liaison {
     display: flex;
@@ -2233,6 +2288,7 @@ h1, h2, h3 {
 .sm-liaison__logo--facebook {
     border-color: var(--sm-facebook-bordure);
     background: var(--sm-facebook-fond);
+    color: #FFFFFF;
 }
 
 .sm-liaison__logo .sm-bouton-social__icone {

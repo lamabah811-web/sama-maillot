@@ -320,6 +320,6 @@ Les tests automatiques (`tests/ConnexionSocialeTest.php`, 28 tests) couvrent dé
 
 - [ ] Boutons corrects en mode clair
 - [ ] Boutons corrects en mode sombre
-- [ ] Boutons corrects sur mobile 360 px : même taille, libellé sur une ligne
+- [ ] Boutons corrects sur mobile 360 px : deux boutons côte à côte, même taille, icône centrée
 - [ ] Au clic : bouton désactivé avec indicateur de chargement (pas de double clic)
 - [ ] Fournisseur désactivé dans `.env` : bouton absent, pages en 404
