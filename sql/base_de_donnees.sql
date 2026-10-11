@@ -53,9 +53,10 @@ CREATE TABLE IF NOT EXISTS utilisateurs (
     prenom                VARCHAR(50)  NOT NULL,
     nom                   VARCHAR(50)  NOT NULL,
     email                 VARCHAR(190) NOT NULL,
+    email_verifie         TINYINT(1)   NOT NULL DEFAULT 0 COMMENT '1 = adresse e-mail prouvée',
     telephone             VARCHAR(13)  NULL COMMENT 'Format +221XXXXXXXXX',
     telephone_verifie_le  DATETIME     NULL,
-    mot_de_passe_hache    VARCHAR(255) NULL COMMENT 'password_hash() ; NULL pour un compte Google',
+    mot_de_passe_hache    VARCHAR(255) NULL COMMENT 'password_hash() ; NULL : compte Google / Facebook ou invité',
     google_id             VARCHAR(64)  NULL,
     statut                ENUM('actif', 'desactive', 'suspendu') NOT NULL DEFAULT 'actif',
     refus_livraison       TINYINT UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Refus ou client injoignable à la livraison (§12.5)',
@@ -80,7 +81,8 @@ CREATE TABLE IF NOT EXISTS utilisateurs (
 CREATE TABLE IF NOT EXISTS codes_verification (
     id              INT UNSIGNED NOT NULL AUTO_INCREMENT,
     utilisateur_id  INT UNSIGNED NULL,
-    type            ENUM('verification_telephone', 'reinitialisation_sms', 'reinitialisation_email') NOT NULL,
+    type            ENUM('verification_telephone', 'reinitialisation_sms', 'reinitialisation_email',
+                         'liaison_sociale_email', 'liaison_sociale_sms', 'email_connexion_sociale') NOT NULL,
     destination     VARCHAR(190) NOT NULL COMMENT 'Téléphone ou e-mail',
     code_hache      VARCHAR(255) NOT NULL,
     essais          TINYINT UNSIGNED NOT NULL DEFAULT 0,
@@ -946,6 +948,50 @@ CREATE TABLE IF NOT EXISTS remboursements (
     CONSTRAINT fk_remboursements_commande FOREIGN KEY (commande_id) REFERENCES commandes (id),
     CONSTRAINT fk_remboursements_client FOREIGN KEY (client_id) REFERENCES utilisateurs (id),
     CONSTRAINT fk_remboursements_admin FOREIGN KEY (admin_id) REFERENCES utilisateurs (id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================================================
+-- Connexion avec Google et Facebook (migration 015)
+-- Un compte est retrouvé par (fournisseur + identifiant), jamais par son e-mail seul.
+-- Aucun jeton d'accès Google ou Facebook n'est conservé.
+-- =============================================================================
+CREATE TABLE IF NOT EXISTS connexions_sociales (
+    id                       INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    utilisateur_id           INT UNSIGNED NOT NULL,
+    fournisseur              ENUM('google', 'facebook') NOT NULL,
+    identifiant_fournisseur  VARCHAR(255) NOT NULL COMMENT '« sub » Google ou « id » Facebook (propre à l''application)',
+    email_fournisseur        VARCHAR(255) NULL,
+    cree_le                  DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    derniere_connexion_le    DATETIME     NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_sociales_fournisseur_identifiant (fournisseur, identifiant_fournisseur),
+    UNIQUE KEY uq_sociales_utilisateur_fournisseur (utilisateur_id, fournisseur),
+    CONSTRAINT fk_sociales_utilisateur FOREIGN KEY (utilisateur_id)
+        REFERENCES utilisateurs (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS demandes_suppression_facebook (
+    id                       INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    identifiant_fournisseur  VARCHAR(255) NOT NULL,
+    utilisateur_id           INT UNSIGNED NULL COMMENT 'Compte concerné (anonymisation différée si commandes en cours)',
+    code_confirmation        CHAR(20)     NOT NULL,
+    statut                   ENUM('recue', 'traitee') NOT NULL DEFAULT 'recue',
+    recue_le                 DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    traitee_le               DATETIME     NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY uq_suppression_code (code_confirmation),
+    KEY idx_suppression_statut (statut),
+    CONSTRAINT fk_suppression_utilisateur FOREIGN KEY (utilisateur_id)
+        REFERENCES utilisateurs (id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS tentatives_connexion_sociale (
+    id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    fournisseur  ENUM('google', 'facebook') NOT NULL,
+    adresse_ip   VARCHAR(45)  NOT NULL,
+    cree_le      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    KEY idx_tentatives_sociales_ip (adresse_ip, cree_le)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =============================================================================

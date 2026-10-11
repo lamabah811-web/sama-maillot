@@ -62,8 +62,13 @@ require __DIR__ . '/../../includes/entete.php';
                     </dl>
                     <div class="d-flex flex-wrap gap-2">
                         <a class="btn btn-contour" href="<?= e(url_page('compte-mot-de-passe')) ?>">
-                            <i class="bi bi-key" aria-hidden="true"></i> Changer mon mot de passe
+                            <i class="bi bi-key" aria-hidden="true"></i> <?= $utilisateur['mot_de_passe_hache'] === null ? 'Définir un mot de passe' : 'Changer mon mot de passe' ?>
                         </a>
+                        <?php if ($utilisateur['role'] !== 'admin' && (fournisseurs_actifs() !== [] || liaisons_du_compte((int) $utilisateur['id']) !== [])): ?>
+                            <a class="btn btn-contour" href="<?= e(url('compte/connexions.php')) ?>">
+                                <i class="bi bi-link-45deg" aria-hidden="true"></i> Google et Facebook
+                            </a>
+                        <?php endif; ?>
                         <form method="post" action="<?= e(url_page('deconnexion')) ?>">
                             <?= champ_csrf() ?>
                             <button class="btn btn-contour" type="submit">

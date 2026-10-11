@@ -214,6 +214,7 @@ require_once __DIR__ . '/metier/litiges.php';
 require_once __DIR__ . '/metier/paiements.php';
 require_once __DIR__ . '/metier/portefeuille.php';
 require_once __DIR__ . '/metier/legal.php';
+require_once __DIR__ . '/metier/connexion_sociale.php';
 require_once __DIR__ . '/metier/systeme.php';
 require_once __DIR__ . '/taches.php';
 

@@ -86,6 +86,9 @@ function refus_suppression_compte(array $utilisateur): ?string
  * Anonymise le compte (transaction) : identité, e-mail, téléphone et mot de passe effacés ;
  * adresses, favoris, panier, notifications et jetons supprimés ; boutique et maillots retirés.
  * Les commandes restent (comptabilité), les avis restent signés « Utilisateur S. ».
+ * Les liaisons Google / Facebook sont supprimées. Aucun jeton Facebook n'étant conservé, l'appel
+ * DELETE /{id}/permissions est impossible : la suppression est locale (l'utilisateur peut retirer
+ * l'application dans les paramètres de son compte Facebook).
  */
 function supprimer_compte(array $utilisateur): void
 {
@@ -96,12 +99,12 @@ function supprimer_compte(array $utilisateur): void
     try {
         $pdo->prepare(
             "UPDATE utilisateurs SET prenom = 'Utilisateur', nom = 'Supprimé', email = :email, telephone = NULL,
-                    telephone_verifie_le = NULL, mot_de_passe_hache = NULL, google_id = NULL,
+                    telephone_verifie_le = NULL, mot_de_passe_hache = NULL, google_id = NULL, email_verifie = 0,
                     version_session = version_session + 1, supprime_le = NOW()
              WHERE id = :id"
         )->execute(['email' => 'supprime-' . $id . '@compte-supprime.invalid', 'id' => $id]);
 
-        foreach (['adresses', 'favoris', 'notifications', 'jetons_connexion'] as $table) {
+        foreach (['adresses', 'favoris', 'notifications', 'jetons_connexion', 'connexions_sociales'] as $table) {
             $pdo->prepare("DELETE FROM $table WHERE utilisateur_id = :id")->execute(['id' => $id]);
         }
         $pdo->prepare('DELETE FROM paniers WHERE utilisateur_id = :id')->execute(['id' => $id]);

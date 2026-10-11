@@ -18,7 +18,7 @@ $base = (string) parse_url(APP_URL, PHP_URL_PATH);
 $base = rtrim($base, '/');
 
 $prives = ['admin/', 'compte/', 'vendeur/', 'panier/', 'paiement/', 'webhooks/', 'connexion/',
-    'mot-de-passe/', 'signalement/', 'litige/', 'commande/', 'favoris/', 'whatsapp.php', 'pages/bientot.php'];
+    'mot-de-passe/', 'signalement/', 'litige/', 'commande/', 'favoris/', 'facebook/', 'whatsapp.php', 'pages/bientot.php'];
 
 echo "User-agent: *\n";
 foreach ($prives as $chemin) {

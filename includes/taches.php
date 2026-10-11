@@ -19,6 +19,7 @@ function executer_taches_automatiques(): array
         'commandes' => traiter_commandes_echues(),
         'abonnements' => traiter_abonnements(),
         'sms' => traiter_file_sms(),
+        'suppressions_facebook' => traiter_demandes_suppression_facebook(),
         'purge' => purger_donnees_anciennes(),
     ];
 }
@@ -34,6 +35,7 @@ function purger_donnees_anciennes(): array
 
     return [
         'tentatives' => $pdo->exec('DELETE FROM tentatives_connexion WHERE cree_le < NOW() - INTERVAL 12 MONTH'),
+        'tentatives_sociales' => $pdo->exec('DELETE FROM tentatives_connexion_sociale WHERE cree_le < NOW() - INTERVAL 1 DAY'),
         'ip_journal' => $pdo->exec('UPDATE journal_actions SET adresse_ip = NULL WHERE adresse_ip IS NOT NULL AND cree_le < NOW() - INTERVAL 12 MONTH'),
         'codes' => $pdo->exec('DELETE FROM codes_verification WHERE expire_le < NOW() - INTERVAL 30 DAY'),
     ];

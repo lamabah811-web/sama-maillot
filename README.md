@@ -332,6 +332,36 @@ Audit du code (toutes les pages) puis attaques réelles sur le site local, compt
 - **Devenir un vrai compte** : « Mot de passe oublié » avec son e-mail ; le compte invité devient un compte
   normal avec ses commandes (avis et réclamations restent réservés aux comptes).
 
+## Connexion avec Google et Facebook
+
+Boutons « Continuer avec Google » et « Continuer avec Facebook » sur les pages de connexion et
+d'inscription. Tout se fait côté serveur (aucun SDK JavaScript).
+
+**Désactivés tant que `.env` n'est pas rempli** : pas de bouton, pages en 404.
+
+**Configuration pas à pas** : [docs/README_CONNEXION_SOCIALE.md](docs/README_CONNEXION_SOCIALE.md)
+(Google Cloud Console, Meta for Developers, tests, liste de vérification).
+
+**Base existante** : importer une fois `sql/migrations/015_connexion_sociale.sql`.
+
+**Fichiers** :
+
+- logique : `includes/metier/connexion_sociale.php` ;
+- départ et retour : `public/connexion/google*.php`, `facebook*.php` ;
+- étapes : `bienvenue.php` (nouveau compte), `lier-compte.php` (compte existant), `completer-email.php` (Facebook sans e-mail) ;
+- gestion des liaisons : `public/compte/connexions.php` ;
+- rappel de suppression Meta : `public/facebook/`.
+
+**Sécurité** :
+
+- state (+ nonce et PKCE pour Google), à usage unique ;
+- id_token Google vérifié (signature, émetteur, audience, expiration, nonce) ;
+- jeton Facebook contrôlé par `/debug_token`, profil lu avec `appsecret_proof` ;
+- aucun jeton conservé ;
+- jamais de liaison automatique sur un e-mail déjà inscrit (mot de passe, ou lien e-mail) ;
+- administrateurs exclus ;
+- 10 connexions démarrées par IP et par 15 minutes.
+
 ## Règles de développement
 
 - Chaque page publique commence par `require __DIR__ . '/../includes/config.php';`

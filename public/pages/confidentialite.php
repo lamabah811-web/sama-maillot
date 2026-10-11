@@ -9,6 +9,7 @@ $titre_page = 'Politique de confidentialité';
 $description_page = 'Comment SAMA MAILLOT collecte, utilise et protège vos données personnelles, et comment exercer vos droits.';
 $page_active = 'confidentialite';
 $email_support = parametre('email_support');
+$connexion_sociale = fournisseurs_actifs() !== [];   // section Google / Facebook seulement si la connexion est proposée
 
 require __DIR__ . '/../../includes/entete.php';
 ?>
@@ -38,6 +39,7 @@ require __DIR__ . '/../../includes/entete.php';
                     <li><a href="#cookies">Cookies</a></li>
                     <li><a href="#securite">Sécurité</a></li>
                     <li><a href="#droits">Vos droits</a></li>
+                    <?php if ($connexion_sociale): ?><li><a href="#google-facebook">Connexion avec Google ou Facebook</a></li><?php endif; ?>
                 </ol>
             </nav>
 
@@ -58,6 +60,10 @@ require __DIR__ . '/../../includes/entete.php';
                 <li><strong>Vendeurs</strong> : nom et ville de la boutique, logo, description, numéros WhatsApp et Wave,
                     paiements d'abonnement (identifiant Wave et capture d'écran).</li>
                 <li><strong>Contenus</strong> : avis, réclamations (messages et photos), signalements, messages envoyés au support.</li>
+                <?php if ($connexion_sociale): ?>
+                <li><strong>Connexion avec Google ou Facebook</strong> (si vous la choisissez) : l'identifiant que Google ou Facebook attribue à votre compte
+                    pour notre site, votre prénom, votre nom et votre adresse e-mail. Rien d'autre : ni vos amis, ni vos publications, ni vos photos.</li>
+                <?php endif; ?>
                 <li><strong>Données techniques</strong> : adresse IP et date lors des connexions et des actions sensibles (sécurité, lutte contre la fraude).</li>
             </ul>
 
@@ -80,6 +86,9 @@ require __DIR__ . '/../../includes/entete.php';
                 <li><strong>Nos prestataires</strong>, qui agissent sur nos instructions : l'hébergeur <?= e(HEBERGEUR['nom']) ?> (serveurs et e-mails),
                     l'opérateur de paiement en ligne (Wave, Orange Money, carte…) pour les paiements.</li>
                 <li><strong>WhatsApp</strong>, uniquement si vous choisissez de contacter un vendeur ou de commander par WhatsApp.</li>
+                <?php if ($connexion_sociale): ?>
+                <li><strong>Google ou Facebook</strong>, uniquement si vous choisissez de vous connecter avec eux : ils savent alors que vous utilisez <?= e(NOM_SITE) ?>.</li>
+                <?php endif; ?>
             </ul>
             <p>
                 Notre hébergeur se trouve en Suisse : vos données sont donc transférées hors du Sénégal, vers un pays
@@ -125,6 +134,23 @@ require __DIR__ . '/../../includes/entete.php';
                 Si vous estimez que vos droits ne sont pas respectés, vous pouvez saisir la Commission de protection des données
                 personnelles du Sénégal (CDP).
             </p>
+            <?php if ($connexion_sociale): ?>
+            <h2 id="google-facebook">9. Connexion avec Google ou Facebook</h2>
+            <p>
+                Si vous choisissez « Continuer avec Google » ou « Continuer avec Facebook », Google ou Facebook nous confirme votre identité
+                (identifiant propre à notre site, prénom, nom, adresse e-mail). Nous ne recevons jamais votre mot de passe Google ou Facebook,
+                nous ne gardons aucun jeton d'accès à votre compte et nous ne publions rien en votre nom.
+            </p>
+            <ul>
+                <li>Vous pouvez délier Google ou Facebook à tout moment depuis Mon compte → « Google et Facebook ».</li>
+                <li><strong>Supprimer vos données Facebook</strong> : dans Facebook, ouvrez Paramètres → Applications et sites web, retirez
+                    <?= e(NOM_SITE) ?> puis demandez la suppression des données. Facebook nous transmet la demande : la liaison avec votre compte
+                    Facebook est supprimée immédiatement, et votre compte <?= e(NOM_SITE) ?> est anonymisé s'il n'a plus aucun autre moyen de connexion.
+                    Si une commande est en cours, l'anonymisation a lieu après sa clôture ; l'historique des commandes est conservé de façon anonyme
+                    (obligation comptable). Facebook vous donne un code et un lien pour suivre l'avancement de la demande.</li>
+                <li>Vous pouvez aussi nous écrire depuis le <a href="<?= e(url_page("contact")) ?>">formulaire de contact</a>.</li>
+            </ul>
+            <?php endif; ?>
             <p>Le site s'adresse aux personnes majeures, ou mineures avec l'accord d'un parent.</p>
         </article>
     </div>

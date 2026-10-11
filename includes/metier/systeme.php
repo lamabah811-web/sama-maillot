@@ -28,7 +28,7 @@ function controles_systeme(): array
         'upload_max_filesize = ' . ini_get('upload_max_filesize') . ', post_max_size = ' . ini_get('post_max_size')
         . ($televersement >= $photoMax ? '.' : ' : inférieur à la taille maximale d\'une photo (' . intdiv($photoMax, 1048576) . ' Mo).')];
     $c[] = ['Serveur', 'Bibliothèques Composer', is_file(DOSSIER_RACINE . '/vendor/autoload.php') ? 'ok' : 'erreur',
-        is_file(DOSSIER_RACINE . '/vendor/autoload.php') ? 'vendor/ présent (PHPMailer).' : 'Lancer « composer install --no-dev » ou envoyer le dossier vendor/.'];
+        is_file(DOSSIER_RACINE . '/vendor/autoload.php') ? 'vendor/ présent (PHPMailer, connexion Google / Facebook).' : 'Lancer « composer install --no-dev » ou envoyer le dossier vendor/.'];
 
     // ---- Sécurité ----
     $c[] = ['Sécurité', 'Environnement', $production ? 'ok' : 'attention', 'APP_ENV = ' . APP_ENV . ($production ? '.' : ' : mettre « production » sur le site public, « recette » sur le site de test.')];

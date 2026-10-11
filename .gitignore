@@ -24,3 +24,9 @@ Thumbs.db
 stockage/paiements/*
 !stockage/.htaccess
 stockage/litiges/*
+
+# Cache des clés publiques de Google (connexion Google)
+stockage/cache/*
+
+# Graine aléatoire d'OpenSSL (créée par les tests de la connexion Google)
+.rnd

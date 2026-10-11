@@ -4,13 +4,34 @@
  *
  * Le mot de passe actuel est demandé. Après le changement, toutes les AUTRES sessions
  * sont fermées ; la session en cours reste ouverte.
+ * Compte sans mot de passe (Google / Facebook) : un lien est envoyé par e-mail pour en DÉFINIR un.
  */
 require __DIR__ . '/../../includes/config.php';
 
 $utilisateur = exiger_connexion();
 $erreurs = [];
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// Compte créé avec Google ou Facebook (pas de mot de passe) : on DÉFINIT un mot de passe par un lien
+// envoyé à l'adresse du compte (une session volée ne suffit pas à en poser un).
+$sansMotDePasse = $utilisateur['mot_de_passe_hache'] === null;
+
+if ($sansMotDePasse && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verifier_csrf()) {
+        $erreurs['general'] = 'Votre session a expiré. Merci de réessayer.';
+    } else {
+        $lien = creer_lien_reinitialisation((int) $utilisateur['id'], (string) $utilisateur['email']);
+        if ($lien === '') {
+            $erreurs['general'] = 'Vous avez demandé trop de liens. Réessayez dans une heure.';
+        } else {
+            envoyer_email((string) $utilisateur['email'], 'Définir votre mot de passe',
+                'Bonjour ' . $utilisateur['prenom'] . ', pour définir le mot de passe de votre compte SAMA MAILLOT, ouvrez ce lien '
+                . '(valable 1 heure, utilisable une seule fois) : ' . $lien
+                . ' — Si vous n\'êtes pas à l\'origine de cette demande, ignorez ce message.', $lien);
+            message_flash('succes', 'Lien envoyé à ' . $utilisateur['email'] . ' pour définir votre mot de passe.');
+            rediriger('compte/mot-de-passe.php');
+        }
+    }
+} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $actuel = (string) ($_POST['actuel'] ?? '');
     $nouveau = (string) ($_POST['mot_de_passe'] ?? '');
     $confirmation = (string) ($_POST['confirmation'] ?? '');
@@ -51,6 +72,22 @@ require __DIR__ . '/../../includes/entete.php';
 <section class="sm-page-formulaire">
     <div class="container">
         <div class="sm-carte-formulaire">
+            <?php if ($sansMotDePasse): ?>
+            <h1 class="mb-2">Définir un mot de passe</h1>
+            <p class="text-body-secondary mb-4">
+                Votre compte n'a pas encore de mot de passe (vous vous connectez avec Google ou Facebook).
+                Recevez un lien à <strong><?= e($utilisateur['email']) ?></strong> pour en choisir un.
+            </p>
+
+            <?= alerte_formulaire($erreurs) ?>
+
+            <form method="post">
+                <?= champ_csrf() ?>
+                <button class="btn btn-or w-100" type="submit">
+                    <i class="bi bi-envelope" aria-hidden="true"></i> Recevoir le lien par e-mail
+                </button>
+            </form>
+            <?php else: ?>
             <h1 class="mb-2">Changer de mot de passe</h1>
             <p class="text-body-secondary mb-4">Vos autres appareils seront déconnectés.</p>
 
@@ -67,6 +104,7 @@ require __DIR__ . '/../../includes/entete.php';
                     <i class="bi bi-check2-circle" aria-hidden="true"></i> Enregistrer
                 </button>
             </form>
+            <?php endif; ?>
 
             <p class="text-center mt-4 mb-0">
                 <a href="<?= e(url(chemin_espace($utilisateur))) ?>"><i class="bi bi-arrow-left" aria-hidden="true"></i> Retour à mon espace</a>

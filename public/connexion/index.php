@@ -7,6 +7,7 @@
  * - 5 échecs en 15 minutes bloquent la connexion pendant 15 minutes.
  * - Un même téléphone peut servir à un compte client ET à un compte vendeur (§8.3) :
  *   si le mot de passe convient aux deux, on demande lequel ouvrir.
+ * - Au-dessus du formulaire : « Continuer avec Google / Facebook » (si activés, voir connexion_sociale.php).
  */
 require __DIR__ . '/../../includes/config.php';
 
@@ -135,6 +136,8 @@ require __DIR__ . '/../../includes/entete.php';
                 </p>
 
                 <?= alerte_formulaire($erreurs) ?>
+
+                <?php require __DIR__ . '/../../includes/boutons_connexion_sociale.php'; ?>
 
                 <form method="post" novalidate>
                     <?= champ_csrf() ?>

@@ -108,7 +108,7 @@ function envoyer_entetes_securite(): void
         "connect-src 'self'",
         "object-src 'none'",
         "base-uri 'self'",
-        "form-action 'self'" . DOMAINES_PAIEMENT_CSP,   // + page de paiement de l'agrégateur (redirection après le formulaire)
+        "form-action 'self'" . DOMAINES_PAIEMENT_CSP . DOMAINES_CONNEXION_SOCIALE_CSP,   // + paiement, + Google / Facebook (« Lier » est un formulaire)
         "frame-ancestors 'none'",
     ]));
 

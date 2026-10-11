@@ -545,6 +545,28 @@
                 ecranLarge.addListener(surEcranLarge);
             }
         }
+
+        // 5. « Continuer avec Google / Facebook » : au clic, bouton désactivé + indicateur de chargement
+        //    (aria-busy), pour éviter un double départ. Remis à zéro si le navigateur revient en arrière.
+        var boutonsSociaux = document.querySelectorAll('[data-bouton-social]');
+        boutonsSociaux.forEach(function (bouton) {
+            bouton.addEventListener('click', function (evenement) {
+                if (bouton.getAttribute('aria-busy') === 'true') {
+                    evenement.preventDefault();
+                    return;
+                }
+                bouton.setAttribute('aria-busy', 'true');
+                bouton.setAttribute('aria-disabled', 'true');
+            });
+        });
+        window.addEventListener('pageshow', function (evenement) {
+            if (evenement.persisted) {
+                boutonsSociaux.forEach(function (bouton) {
+                    bouton.removeAttribute('aria-busy');
+                    bouton.removeAttribute('aria-disabled');
+                });
+            }
+        });
     });
 
     // 2. Le visiteur n'a rien choisi : on suit le système en direct (ex. mode nuit automatique).

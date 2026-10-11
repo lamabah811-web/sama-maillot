@@ -22,7 +22,7 @@ function trop_de_codes_demandes(string $telephone): bool
     $requete = bdd()->prepare(
         "SELECT COUNT(*) FROM codes_verification
          WHERE destination = :destination
-           AND type IN ('verification_telephone', 'reinitialisation_sms')
+           AND type IN ('verification_telephone', 'reinitialisation_sms', 'liaison_sociale_sms')
            AND cree_le > NOW() - INTERVAL 1 HOUR"
     );
     $requete->execute(['destination' => $telephone]);

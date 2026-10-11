@@ -2095,6 +2095,151 @@ h1, h2, h3 {
     min-height: 44px;
 }
 
+/* ---- « Continuer avec Google / Facebook » : chartes officielles des deux marques ----
+   Couleurs en variables qui suivent data-bs-theme (posé avant l'affichage : aucun flash).
+   Google : clair #FFFFFF / #747775 / #1F1F1F, sombre #131314 / #8E918F / #E3E3E3.
+   Facebook : #1877F2, texte blanc, survol #166FE5 ; bordure discrète #2E2E2E en sombre. */
+:root {
+    --sm-google-fond: #FFFFFF;
+    --sm-google-bordure: #747775;
+    --sm-google-texte: #1F1F1F;
+    --sm-google-survol: #F2F2F2;
+    --sm-facebook-fond: #1877F2;
+    --sm-facebook-survol: #166FE5;
+    --sm-facebook-bordure: #1877F2;
+}
+
+[data-bs-theme="dark"] {
+    --sm-google-fond: #131314;
+    --sm-google-bordure: #8E918F;
+    --sm-google-texte: #E3E3E3;
+    --sm-google-survol: #1F1F20;
+    --sm-facebook-bordure: #2E2E2E;
+}
+
+.sm-sociaux {
+    display: grid;
+    gap: 0.75rem;
+}
+
+.sm-bouton-social {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 48px;
+    padding: 0.6rem 2.75rem;
+    border: 1px solid;
+    border-radius: var(--sm-rayon-bouton);
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.25;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
+}
+
+.sm-bouton-social--google {
+    background: var(--sm-google-fond);
+    border-color: var(--sm-google-bordure);
+    color: var(--sm-google-texte);
+}
+
+.sm-bouton-social--google:hover {
+    background: var(--sm-google-survol);
+    color: var(--sm-google-texte);
+}
+
+.sm-bouton-social--facebook {
+    background: var(--sm-facebook-fond);
+    border-color: var(--sm-facebook-bordure);
+    color: #FFFFFF;
+}
+
+.sm-bouton-social--facebook:hover {
+    background: var(--sm-facebook-survol);
+    color: #FFFFFF;
+}
+
+.sm-bouton-social:focus-visible {
+    outline: 3px solid var(--sm-accent);
+    outline-offset: 2px;
+}
+
+/* Icône à gauche, texte centré sur toute la largeur */
+/* Téléphone étroit (360 px) : libellé sur une seule ligne, les deux boutons gardent la même hauteur */
+@media (max-width: 399.98px) {
+    .sm-bouton-social {
+        font-size: 0.9375rem;
+        white-space: nowrap;
+    }
+}
+
+.sm-bouton-social__icone {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    transform: translateY(-50%);
+}
+
+.sm-bouton-social__attente {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    margin-top: -0.5rem;
+    display: none;
+}
+
+/* Après le clic : désactivé + indicateur de chargement (évite le double clic) */
+.sm-bouton-social[aria-busy="true"] {
+    pointer-events: none;
+    opacity: 0.85;
+}
+
+.sm-bouton-social[aria-busy="true"] .sm-bouton-social__attente {
+    display: inline-block;
+}
+
+/* « Mes connexions » : une ligne par fournisseur */
+.sm-liaison {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.75rem 0.9rem;
+    border: 1px solid var(--sm-bordure);
+    border-radius: var(--sm-rayon);
+}
+
+.sm-liaison__texte {
+    flex: 1;
+    min-width: 0;
+}
+
+.sm-liaison__logo {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 1px solid var(--sm-google-bordure);
+    background: var(--sm-google-fond);
+}
+
+.sm-liaison__logo--facebook {
+    border-color: var(--sm-facebook-bordure);
+    background: var(--sm-facebook-fond);
+}
+
+.sm-liaison__logo .sm-bouton-social__icone {
+    position: static;
+    transform: none;
+}
+
 /* Bandeau « Mode développement » (SMS / e-mails simulés, en local uniquement) */
 .sm-alerte-dev {
     background: var(--sm-surface);

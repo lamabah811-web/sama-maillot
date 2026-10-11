@@ -99,6 +99,8 @@ require __DIR__ . '/../../includes/entete.php';
 
             <?= alerte_formulaire($erreurs) ?>
 
+            <?php require __DIR__ . '/../../includes/boutons_connexion_sociale.php'; ?>
+
             <form method="post" novalidate>
                 <?= champ_csrf() ?>
 
