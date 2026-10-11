@@ -1047,6 +1047,7 @@ h1, h2, h3 {
 }
 
 .sm-menu-mobile .offcanvas-header {
+    justify-content: space-between;
     padding-block: 1rem;
     border-bottom: 1px solid var(--sm-bordure);
 }
@@ -1056,21 +1057,29 @@ h1, h2, h3 {
     font-family: var(--sm-police-titre);
     font-weight: 800;
     font-size: 1.35rem;
+}
+
+/* Titre en deux couleurs, comme le logo : texte (noir / blanc) puis or */
+.sm-menu-mobile__titre-1 {
+    color: var(--sm-texte);
+}
+
+.sm-menu-mobile__titre-2 {
     color: var(--sm-lien);
 }
 
 .sm-menu-mobile__fermer {
     margin-left: auto;
-    width: 44px;
-    height: 44px;
+    width: 34px;
+    height: 34px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border: 1px solid var(--sm-bordure);
-    border-radius: 0.75rem;
+    border-radius: 0.6rem;
     background: var(--sm-surface);
     color: var(--sm-texte);
-    font-size: 1.05rem;
+    font-size: 0.8rem;
     transition: background-color 0.15s ease, color 0.15s ease;
 }
 

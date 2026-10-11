@@ -11,7 +11,7 @@
 ?>
 <div class="offcanvas offcanvas-start sm-menu-mobile d-xl-none" tabindex="-1" id="menu-mobile" aria-labelledby="titre-menu-mobile">
     <div class="offcanvas-header">
-        <h2 class="offcanvas-title sm-menu-mobile__titre" id="titre-menu-mobile">Menu</h2>
+        <h2 class="offcanvas-title sm-menu-mobile__titre" id="titre-menu-mobile"><span class="sm-menu-mobile__titre-1">Me</span><span class="sm-menu-mobile__titre-2">nu</span></h2>
         <button type="button" class="sm-menu-mobile__fermer" data-bs-dismiss="offcanvas" aria-label="Fermer le menu">
             <i class="bi bi-x-lg" aria-hidden="true"></i>
         </button>
