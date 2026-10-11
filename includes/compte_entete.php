@@ -1,7 +1,7 @@
 <?php
 /**
  * SAMA MAILLOT — compte de l'utilisateur connecté dans l'en-tête : cloche des notifications + menu du compte.
- * Inclus deux fois par entete.php : tout à droite (dès 992 px) et dans le menu burger (téléphone).
+ * Inclus par entete.php, tout à droite dès 992 px (sur téléphone, le compte est dans menu_mobile.php).
  * Attend : $utilisateur_entete, $notifications_non_lues, $menu_compte, $initiales_entete, $role_entete.
  */
 ?>

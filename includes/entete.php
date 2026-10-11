@@ -71,7 +71,8 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
         Barre de navigation :
         - ordinateur (≥ 1200 px) : logo | Accueil, Catalogue, À propos, Contact |
           loupe | panier | Connexion (visiteur) ou notifications + menu du compte (connecté) ;
-        - mobile et tablette : burger | logo | loupe | panier (+ Connexion dès 992 px ; sinon « Compte » en barre basse).
+        - mobile et tablette : burger | logo | loupe | panier (+ Connexion dès 992 px ; sinon « Compte » en barre basse) ;
+          le burger ouvre un panneau qui glisse depuis la gauche (menu_mobile.php).
         Pas de bouton « Inscription » : la page de connexion propose « Créer un compte ».
         Le choix clair / sombre est un bouton rond flottant en bas à droite (pied_de_page.php).
         La loupe ouvre la barre de recherche juste sous l'en-tête (et la referme).
@@ -79,10 +80,10 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
     <nav class="navbar navbar-expand-xl py-2" aria-label="Navigation principale">
         <div class="container gap-1 gap-sm-2">
 
-            <!-- Bouton burger (mobile et tablette) -->
+            <!-- Bouton burger (mobile et tablette) : ouvre le panneau latéral gauche #menu-mobile -->
             <button class="navbar-toggler sm-burger" type="button"
-                    data-bs-toggle="collapse" data-bs-target="#menu-principal"
-                    aria-controls="menu-principal" aria-expanded="false" aria-label="Ouvrir le menu">
+                    data-bs-toggle="offcanvas" data-bs-target="#menu-mobile"
+                    aria-controls="menu-mobile" aria-label="Ouvrir le menu">
                 <i class="bi bi-list" aria-hidden="true"></i>
             </button>
 
@@ -124,7 +125,7 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
                 <?php endif; ?>
             </div>
 
-            <!-- Menu repliable -->
+            <!-- Liens principaux (ordinateur, ≥ 1200 px) ; en dessous, ils sont dans le panneau #menu-mobile -->
             <div class="collapse navbar-collapse" id="menu-principal">
                 <ul class="navbar-nav sm-nav-centre">
                     <li class="nav-item">
@@ -166,13 +167,6 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
                         </a>
                     </li>
                 </ul>
-
-                <!-- Compte (utilisateur connecté), téléphone : dans le menu burger (dès 992 px : à droite de l'en-tête) -->
-                <?php if ($utilisateur_entete !== null): ?>
-                    <div class="sm-actions-compte d-lg-none mt-2">
-                        <?php require __DIR__ . '/compte_entete.php'; ?>
-                    </div>
-                <?php endif; ?>
             </div>
         </div>
     </nav>
@@ -196,6 +190,8 @@ $libelle_panier = $nombre_articles_panier . ($nombre_articles_panier > 1 ? ' art
         </div>
     </div>
 </header>
+
+<?php require __DIR__ . '/menu_mobile.php'; ?>
 
 <main id="contenu" tabindex="-1">
     <?php require __DIR__ . '/messages_flash.php'; ?>

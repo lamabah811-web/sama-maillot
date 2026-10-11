@@ -528,6 +528,23 @@
                 });
             });
         }
+
+        // 4. Menu du téléphone (panneau gauche) : refermé s'il est ouvert quand l'écran passe à 1200 px et plus
+        //    (tablette tournée, fenêtre agrandie) — le menu de l'ordinateur prend alors le relais.
+        var menuMobile = document.getElementById('menu-mobile');
+        if (menuMobile && window.bootstrap && window.matchMedia) {
+            var ecranLarge = window.matchMedia('(min-width: 1200px)');
+            var surEcranLarge = function () {
+                if (ecranLarge.matches) {
+                    window.bootstrap.Offcanvas.getOrCreateInstance(menuMobile).hide();
+                }
+            };
+            if (ecranLarge.addEventListener) {
+                ecranLarge.addEventListener('change', surEcranLarge);
+            } else if (ecranLarge.addListener) {
+                ecranLarge.addListener(surEcranLarge);
+            }
+        }
     });
 
     // 2. Le visiteur n'a rien choisi : on suit le système en direct (ex. mode nuit automatique).
