@@ -20,7 +20,7 @@ $titre_complet = !empty($titre_page)
     : NOM_SITE . ' — La marketplace sénégalaise des maillots de football';
 
 $description_page ??= 'Achetez et vendez des maillots de football au Sénégal : équipes nationales, clubs et rétro. '
-    . 'Paiement sécurisé, paiement à la livraison ou commande via WhatsApp. Prix en FCFA.';
+    . (paiement_en_ligne_actif() ? 'Paiement sécurisé, paiement à la livraison' : 'Paiement à la livraison') . ' ou commande via WhatsApp. Prix en FCFA.';
 
 // Utilisateur connecté (null pour un visiteur) et adresse de son espace.
 $utilisateur_entete = utilisateur_connecte();

@@ -55,8 +55,8 @@ require __DIR__ . '/../../includes/entete.php';
             <ul>
                 <li><strong>Compte</strong> : prénom, nom, adresse e-mail, mot de passe (enregistré uniquement sous forme chiffrée irréversible), numéro de téléphone.</li>
                 <li><strong>Livraison</strong> : adresses (ville, quartier, point de repère) et numéro à appeler pour la livraison.</li>
-                <li><strong>Commandes</strong> : articles, montants, statuts, historique, mode de paiement. Pour un paiement en ligne,
-                    nous recevons de l'opérateur la référence et le statut du paiement, <strong>jamais</strong> votre code secret ni vos données bancaires complètes.</li>
+                <li><strong>Commandes</strong> : articles, montants, statuts, historique, mode de paiement.<?php if (paiement_en_ligne_actif()): ?> Pour un paiement en ligne,
+                    nous recevons de l'opérateur la référence et le statut du paiement, <strong>jamais</strong> votre code secret ni vos données bancaires complètes.<?php endif; ?></li>
                 <li><strong>Vendeurs</strong> : nom et ville de la boutique, logo, description, numéros WhatsApp et Wave,
                     paiements d'abonnement (identifiant Wave et capture d'écran).</li>
                 <li><strong>Contenus</strong> : avis, réclamations (messages et photos), signalements, messages envoyés au support.</li>
@@ -71,7 +71,7 @@ require __DIR__ . '/../../includes/entete.php';
             <ul>
                 <li>Créer et sécuriser votre compte (exécution du contrat).</li>
                 <li>Transmettre votre commande au vendeur et permettre la livraison (exécution du contrat).</li>
-                <li>Encaisser et reverser les paiements en ligne, rembourser en cas de problème (exécution du contrat).</li>
+                <?php if (paiement_en_ligne_actif()): ?><li>Encaisser et reverser les paiements en ligne, rembourser en cas de problème (exécution du contrat).</li><?php endif; ?>
                 <li>Vous envoyer les notifications de service : commandes, livraisons, réclamations, abonnement (exécution du contrat).</li>
                 <li>Traiter les réclamations, avis et signalements ; prévenir la fraude et les abus (intérêt légitime).</li>
                 <li>Respecter nos obligations légales, notamment comptables (obligation légale).</li>
@@ -83,8 +83,8 @@ require __DIR__ . '/../../includes/entete.php';
                 <li><strong>Le vendeur</strong> chez qui vous commandez : votre nom, votre numéro de téléphone et votre adresse de livraison, uniquement pour cette commande.</li>
                 <li><strong>Le public</strong> : vos avis, signés de votre prénom et de l'initiale de votre nom. Votre identité n'est jamais révélée au vendeur que vous signalez.</li>
                 <li><strong>L'équipe <?= e(NOM_SITE) ?></strong>, pour le support, la modération et les litiges.</li>
-                <li><strong>Nos prestataires</strong>, qui agissent sur nos instructions : l'hébergeur <?= e(HEBERGEUR['nom']) ?> (serveurs et e-mails),
-                    l'opérateur de paiement en ligne (Wave, Orange Money, carte…) pour les paiements.</li>
+                <li><strong>Nos prestataires</strong>, qui agissent sur nos instructions : l'hébergeur <?= e(HEBERGEUR['nom']) ?> (serveurs et e-mails)<?= paiement_en_ligne_actif() ? ',
+                    l\'opérateur de paiement en ligne (Wave, Orange Money, carte…) pour les paiements' : '' ?>.</li>
                 <li><strong>WhatsApp</strong>, uniquement si vous choisissez de contacter un vendeur ou de commander par WhatsApp.</li>
                 <?php if ($connexion_sociale): ?>
                 <li><strong>Google ou Facebook</strong>, uniquement si vous choisissez de vous connecter avec eux : ils savent alors que vous utilisez <?= e(NOM_SITE) ?>.</li>

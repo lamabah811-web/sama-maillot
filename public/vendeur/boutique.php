@@ -24,6 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erreurs['general'] = 'Votre session a expiré. Merci de renvoyer le formulaire.';
     } else {
         foreach (array_keys($valeurs) as $champ) {
+            // Paiement en ligne éteint : le champ Wave (versements) est masqué, le numéro déjà enregistré est gardé.
+            if ($champ === 'numero_wave' && !paiement_en_ligne_actif()) {
+                continue;
+            }
             $valeurs[$champ] = champ_post($champ);
         }
 
@@ -162,6 +166,7 @@ require __DIR__ . '/../../includes/entete.php';
                                 <div class="form-text" id="aide-whatsapp">Les clients vous écrivent ici. Il n'apparaît jamais dans le code des pages.</div>
                                 <?= message_erreur($erreurs, 'numero_whatsapp') ?>
                             </div>
+                            <?php if (paiement_en_ligne_actif()): ?>
                             <div class="col-12 col-md-6">
                                 <label class="form-label" for="numero_wave">Numéro Wave (versements)</label>
                                 <div class="input-group">
@@ -173,6 +178,7 @@ require __DIR__ . '/../../includes/entete.php';
                                 <div class="form-text" id="aide-wave">Facultatif pour l'instant, obligatoire avant votre premier versement.</div>
                                 <?= message_erreur($erreurs, 'numero_wave') ?>
                             </div>
+                            <?php endif; ?>
                         </div>
                     </fieldset>
                 </div>

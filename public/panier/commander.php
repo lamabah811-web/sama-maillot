@@ -379,18 +379,16 @@ require __DIR__ . '/../../includes/entete.php';
                                             <span class="d-block small text-body-secondary">Wave, Orange Money, Free Money ou carte. Remboursé si vous ne recevez pas votre maillot ou s'il n'est pas conforme.</span>
                                         </label>
                                     </div>
-                                <?php else: ?>
+                                <?php elseif (paiement_en_ligne_actif()): ?>
                                     <div class="form-check sm-choix-paiement sm-choix-paiement--indisponible">
                                         <input class="form-check-input" type="radio" name="paiement" id="paiement-en-ligne" value="en_ligne" disabled>
                                         <label class="form-check-label" for="paiement-en-ligne">
                                             <strong>Payer en ligne</strong>
-                                            <?= paiement_en_ligne_actif() ? '' : '<span class="badge text-bg-secondary">Bientôt</span>' ?>
-                                            <span class="d-block small text-body-secondary"><?= $frais_a_convenir && paiement_en_ligne_actif()
-                                                ? 'Impossible avec des frais de livraison « à convenir » : choisissez le retrait ou le paiement à la livraison.'
-                                                : 'Wave, Orange Money, carte : remboursé si vous ne recevez pas votre maillot.' ?></span>
+                                            <span class="d-block small text-body-secondary">Impossible avec des frais de livraison « à convenir » : choisissez le retrait ou le paiement à la livraison.</span>
                                         </label>
                                     </div>
                                 <?php endif; ?>
+                                <?php /* Paiement en ligne éteint (PAIEMENT_FOURNISSEUR vide) : seul le paiement à la livraison est proposé. */ ?>
                                 <div class="form-check sm-choix-paiement">
                                     <input class="form-check-input" type="radio" name="paiement" id="paiement-livraison" value="livraison"
                                            <?= $refus_livraison === null ? 'checked' : 'disabled' ?>>
@@ -401,11 +399,18 @@ require __DIR__ . '/../../includes/entete.php';
                                 </div>
                             </fieldset>
 
-                            <p class="small text-body-secondary">
-                                <i class="bi bi-info-circle" aria-hidden="true"></i>
-                                <strong>Payez en ligne pour être remboursé en cas de problème</strong> : SAMA MAILLOT garde l'argent jusqu'à la réception.
-                                En paiement à la livraison, vous payez le vendeur directement : nous ne pouvons pas vous rembourser.
-                            </p>
+                            <?php if (paiement_en_ligne_actif()): ?>
+                                <p class="small text-body-secondary">
+                                    <i class="bi bi-info-circle" aria-hidden="true"></i>
+                                    <strong>Payez en ligne pour être remboursé en cas de problème</strong> : SAMA MAILLOT garde l'argent jusqu'à la réception.
+                                    En paiement à la livraison, vous payez le vendeur directement : nous ne pouvons pas vous rembourser.
+                                </p>
+                            <?php else: ?>
+                                <p class="small text-body-secondary">
+                                    <i class="bi bi-info-circle" aria-hidden="true"></i>
+                                    Vous payez le vendeur <strong>quand vous recevez votre maillot</strong> : vérifiez-le avant de payer.
+                                </p>
+                            <?php endif; ?>
 
                             <dl class="sm-recap__lignes">
                                 <dt>Articles</dt>

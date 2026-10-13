@@ -237,6 +237,11 @@ function menu_vendeur(string $actif): string
         'abonnement' => ['vendeur/abonnement.php', 'bi-calendar-check', 'Abonnement'],
     ];
 
+    // Le portefeuille ne reçoit que l'argent des paiements en ligne : masqué quand ils sont éteints.
+    if (!paiement_en_ligne_actif()) {
+        unset($entrees['portefeuille']);
+    }
+
     $html = '<nav class="sm-menu-vendeur mb-4" aria-label="Espace vendeur"><ul>';
     foreach ($entrees as $cle => [$chemin, $icone, $libelle]) {
         $html .= '<li><a href="' . e(url($chemin)) . '"' . ($cle === $actif ? ' aria-current="page"' : '') . '>'

@@ -205,11 +205,19 @@ require __DIR__ . '/../../includes/entete.php';
                 </div>
             </div>
             <div class="col-12 col-sm-6">
-                <div class="sm-tuile">
-                    <h2><i class="bi bi-wallet2" aria-hidden="true"></i> Mon portefeuille</h2>
-                    <p class="mb-2">Vos fonds en attente, disponibles et versés.</p>
-                    <span class="badge text-bg-secondary">Bientôt disponible</span>
-                </div>
+                <?php if (paiement_en_ligne_actif()): ?>
+                    <div class="sm-tuile">
+                        <h2><i class="bi bi-wallet2" aria-hidden="true"></i> Mon portefeuille</h2>
+                        <p class="mb-2">Vos fonds en attente, disponibles et versés.</p>
+                        <a class="btn btn-contour" href="<?= e(url('vendeur/portefeuille.php')) ?>">Voir mon portefeuille <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                    </div>
+                <?php else: ?>
+                    <div class="sm-tuile">
+                        <h2><i class="bi bi-cash-coin" aria-hidden="true"></i> Paiement des clients</h2>
+                        <p class="mb-0">Vos clients vous paient <strong>à la livraison</strong>, en espèces ou par Wave,
+                            quand ils reçoivent leur maillot. L'argent vous revient directement.</p>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>

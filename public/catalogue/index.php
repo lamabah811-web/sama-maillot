@@ -34,7 +34,7 @@ if ($filtres['q'] !== '') {
 }
 
 $description_page = $categorie !== null
-    ? $categorie['description'] . ' Prix en FCFA, paiement sécurisé ou à la livraison.'
+    ? $categorie['description'] . (paiement_en_ligne_actif() ? ' Prix en FCFA, paiement sécurisé ou à la livraison.' : ' Prix en FCFA, paiement à la livraison.')
     : 'Tous les maillots de football vendus par les boutiques du Sénégal : équipes nationales, clubs et rétro.';
 
 // Les pages de résultats de recherche et les combinaisons de filtres ne sont pas indexées (§30)

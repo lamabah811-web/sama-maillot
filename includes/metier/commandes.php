@@ -103,7 +103,7 @@ function refus_paiement_livraison(?array $client, int $nouvellesCommandes, ?stri
     if ($refus >= $refusMax) {
         return 'Le paiement à la livraison n\'est plus disponible ' . ($parTelephone ? 'pour ce numéro' : 'sur votre compte')
             . ' (plusieurs refus à la livraison). '
-            . (paiement_en_ligne_actif() ? 'Choisissez le paiement en ligne.' : 'Le paiement en ligne arrive très prochainement.');
+            . (paiement_en_ligne_actif() ? 'Choisissez le paiement en ligne.' : 'Contactez le support SAMA MAILLOT.');
     }
 
     $maximum = max(1, (int) parametre('commandes_livraison_simultanees', '3'));

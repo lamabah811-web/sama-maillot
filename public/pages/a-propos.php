@@ -83,7 +83,7 @@ require __DIR__ . '/../../includes/entete.php';
                     se passera s'il ne reçoit rien.
                 </p>
                 <p class="sm-texte-section mb-0">
-                    SAMA MAILLOT garde ce qui marche, le paiement à la livraison, Wave, Orange Money et WhatsApp, et
+                    SAMA MAILLOT garde ce qui marche, le paiement à la livraison, Wave et WhatsApp, et
                     ajoute ce qui manquait : des boutiques identifiées, une authenticité déclarée sur chaque maillot,
                     un suivi de commande clair et la confirmation de réception par le client.
                 </p>
@@ -104,8 +104,9 @@ require __DIR__ . '/../../includes/entete.php';
                     <h3 class="h5 fw-bold">Confiance</h3>
                     <p class="mb-0">
                         Des boutiques identifiées, l'authenticité déclarée sur chaque maillot et un suivi clair de
-                        chaque commande. Avec le paiement en ligne (bientôt), votre argent sera conservé par la
-                        plateforme jusqu'à la livraison confirmée.
+                        chaque commande. <?= paiement_en_ligne_actif()
+                            ? 'Avec le paiement en ligne, votre argent est conservé par la plateforme jusqu\'à la livraison confirmée.'
+                            : 'Vous payez à la livraison, seulement quand le maillot est entre vos mains.' ?>
                     </p>
                 </div>
             </div>

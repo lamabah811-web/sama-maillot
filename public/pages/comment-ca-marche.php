@@ -26,15 +26,23 @@ require __DIR__ . '/../../includes/entete.php';
                     Chaque annonce indique s'il s'agit d'un maillot officiel, d'une réplique ou d'une version fan.</li>
                 <li><strong>Choisissez la taille</strong> (et le flocage si la boutique le propose), puis ajoutez au panier.</li>
                 <li><strong>Indiquez votre adresse et votre numéro</strong> : le vendeur vous appellera pour la livraison.</li>
+                <?php if (paiement_en_ligne_actif()): ?>
                 <li><strong>Payez comme vous voulez</strong> : en ligne (Wave, Orange Money, Free Money, carte — protégé, remboursable)
                     ou à la livraison, au vendeur.</li>
+                <?php else: ?>
+                <li><strong>Payez à la livraison</strong> : en espèces ou par Wave, au vendeur, quand vous recevez votre maillot.
+                    Rien à payer avant.</li>
+                <?php endif; ?>
                 <li><strong>Suivez votre commande</strong> dans « Mes commandes » : confirmée, en route, livrée. Vous êtes prévenu à chaque étape.</li>
-                <li><strong>Recevez votre maillot.</strong> Paiement en ligne : donnez votre code de livraison seulement maillot en main.
+                <li><strong>Recevez votre maillot.</strong> <?= paiement_en_ligne_actif()
+                    ? 'Paiement en ligne : donnez votre code de livraison seulement maillot en main.'
+                    : 'Vérifiez-le, puis payez le vendeur.' ?>
                     Confirmez la réception, puis notez le vendeur.</li>
             </ol>
             <p class="mt-3">
-                Un problème ? Ouvrez une réclamation depuis votre commande : SAMA MAILLOT fait la médiation et, si vous avez payé
-                en ligne, vous rembourse quand la réclamation est fondée.
+                Un problème ? Ouvrez une réclamation depuis votre commande : SAMA MAILLOT fait la médiation<?= paiement_en_ligne_actif()
+                    ? ' et, si vous avez payé en ligne, vous rembourse quand la réclamation est fondée.'
+                    : ' avec le vendeur.' ?>
             </p>
             <p><a class="btn btn-or" href="<?= e(url_page('catalogue')) ?>"><i class="bi bi-grid" aria-hidden="true"></i> Voir le catalogue</a></p>
 
@@ -45,8 +53,12 @@ require __DIR__ . '/../../includes/entete.php';
                 <li><strong>Réglez vos zones de livraison</strong> et vos tarifs (ou le retrait sur place).</li>
                 <li><strong>Publiez vos maillots</strong> avec de vraies photos, l'authenticité, l'état et le stock par taille.</li>
                 <li><strong>Confirmez vos commandes</strong> sous <?= e(parametre('confirmation_vendeur_heures', '24')) ?> heures, appelez le client et livrez.</li>
+                <?php if (paiement_en_ligne_actif()): ?>
                 <li><strong>Soyez payé</strong> : à la livraison directement, ou en ligne via votre portefeuille, versé par Wave
                     le <?= e(str_replace(',', ' et le ', parametre('versement_jours', 'mardi,vendredi'))) ?>.</li>
+                <?php else: ?>
+                <li><strong>Soyez payé</strong> directement par le client, à la livraison (espèces ou Wave).</li>
+                <?php endif; ?>
                 <li><strong>Renouvelez votre abonnement</strong> : <?= e(format_fcfa(prix_abonnement())) ?> par mois, sans commission sur vos ventes.</li>
             </ol>
             <p class="mt-3">

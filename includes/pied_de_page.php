@@ -11,12 +11,10 @@ $colonnes_pied = [
         'politique-vendeur' => 'Politique vendeur', 'confidentialite' => 'Confidentialité', 'mentions-legales' => 'Mentions légales'],
 ];
 
-// Moyens de paiement acceptés : [icône, libellé]
-$moyens_paiement = [
-    ['bi-phone', 'Wave'],
-    ['bi-phone', 'Orange Money'],
-    ['bi-cash-coin', 'Paiement à la livraison'],
-];
+// Moyens de paiement acceptés : [icône, libellé]. Paiement en ligne éteint : à la livraison uniquement (espèces ou Wave).
+$moyens_paiement = paiement_en_ligne_actif()
+    ? [['bi-phone', 'Wave'], ['bi-phone', 'Orange Money'], ['bi-cash-coin', 'Paiement à la livraison']]
+    : [['bi-cash-coin', 'Paiement à la livraison'], ['bi-cash', 'Espèces'], ['bi-phone', 'Wave']];
 
 // Entrées de la barre basse mobile : [clé de page, icône, libellé].
 $liens_nav_basse = [
@@ -63,7 +61,9 @@ $liens_nav_basse = [
                 </ul>
                 <p class="mt-3 mb-0 small">
                     <i class="bi bi-shield-check" aria-hidden="true"></i>
-                    En paiement en ligne, votre argent est protégé jusqu'à la livraison.
+                    <?= paiement_en_ligne_actif()
+                        ? 'En paiement en ligne, votre argent est protégé jusqu\'à la livraison.'
+                        : 'Vous payez le vendeur seulement quand vous recevez votre maillot.' ?>
                 </p>
             </div>
         </div>

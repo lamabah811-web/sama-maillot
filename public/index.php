@@ -192,18 +192,26 @@ require __DIR__ . '/../includes/entete.php';
         <div class="sm-etapes">
             <article class="sm-bloc">
                 <span class="sm-bloc__numero" aria-hidden="true">01</span>
-                <h3><i class="bi bi-shield-check" aria-hidden="true"></i> Paiement sécurisé</h3>
-                <p>
-                    En paiement en ligne (Wave, Orange Money…), votre argent est conservé par SAMA MAILLOT
-                    et n'est versé au vendeur qu'après la livraison. Maillot non reçu ? Vous êtes remboursé.
-                </p>
+                <?php if (paiement_en_ligne_actif()): ?>
+                    <h3><i class="bi bi-shield-check" aria-hidden="true"></i> Paiement sécurisé</h3>
+                    <p>
+                        En paiement en ligne (Wave, Orange Money…), votre argent est conservé par SAMA MAILLOT
+                        et n'est versé au vendeur qu'après la livraison. Maillot non reçu ? Vous êtes remboursé.
+                    </p>
+                <?php else: ?>
+                    <h3><i class="bi bi-patch-check" aria-hidden="true"></i> Boutiques identifiées</h3>
+                    <p>
+                        Chaque boutique est identifiée et indique sur chaque annonce si le maillot est officiel,
+                        une réplique ou une version fan. Les avis des clients sont publics.
+                    </p>
+                <?php endif; ?>
             </article>
             <article class="sm-bloc">
                 <span class="sm-bloc__numero" aria-hidden="true">02</span>
                 <h3><i class="bi bi-cash-coin" aria-hidden="true"></i> Paiement à la livraison</h3>
                 <p>
-                    Vous préférez payer en main propre ? Réglez le vendeur en espèces ou par Wave
-                    au moment où vous recevez votre maillot.
+                    <?= paiement_en_ligne_actif() ? 'Vous préférez payer en main propre ? Réglez' : 'Rien à payer avant : réglez' ?>
+                    le vendeur en espèces ou par Wave au moment où vous recevez votre maillot.
                 </p>
             </article>
             <article class="sm-bloc">

@@ -293,11 +293,19 @@ require __DIR__ . '/../../includes/entete.php';
 
                 <!-- Paiement sécurisé (§10.4) -->
                 <div class="sm-encadre-confiance mb-3">
-                    <span class="sm-icone-teintee" aria-hidden="true"><i class="bi bi-shield-check"></i></span>
-                    <div>
-                        <strong>Paiement sécurisé</strong>
-                        <p class="mb-0">En paiement en ligne, votre argent est remboursé si vous ne recevez pas votre maillot.</p>
-                    </div>
+                    <?php if (paiement_en_ligne_actif()): ?>
+                        <span class="sm-icone-teintee" aria-hidden="true"><i class="bi bi-shield-check"></i></span>
+                        <div>
+                            <strong>Paiement sécurisé</strong>
+                            <p class="mb-0">En paiement en ligne, votre argent est remboursé si vous ne recevez pas votre maillot.</p>
+                        </div>
+                    <?php else: ?>
+                        <span class="sm-icone-teintee" aria-hidden="true"><i class="bi bi-cash-coin"></i></span>
+                        <div>
+                            <strong>Paiement à la livraison</strong>
+                            <p class="mb-0">Vous payez le vendeur, en espèces ou par Wave, seulement quand vous recevez votre maillot.</p>
+                        </div>
+                    <?php endif; ?>
                 </div>
 
                 <!-- Vendeur (§10.4) -->

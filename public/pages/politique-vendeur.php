@@ -61,11 +61,20 @@ require __DIR__ . '/../../includes/entete.php';
             <ul>
                 <li>Confirmez ou refusez chaque commande dans les <strong><?= e(parametre('confirmation_vendeur_heures', '24')) ?> heures</strong> ; sinon elle est annulée automatiquement.</li>
                 <li>Appelez le client pour organiser la livraison ; respectez les délais et tarifs affichés pour vos zones.</li>
+                <?php if (paiement_en_ligne_actif()): ?>
                 <li>Paiement en ligne : demandez au client son <strong>code de livraison</strong> à la remise et saisissez-le. Ne demandez jamais de paiement en plus.</li>
+                <?php endif; ?>
                 <li>Paiement à la livraison : encaissez le montant de la commande à la remise, puis marquez-la livrée.</li>
                 <li>En cas de réclamation, répondez sous <?= e(parametre('litige_reponse_vendeur_heures', '48')) ?> heures et cherchez un accord avec le client.</li>
             </ul>
 
+            <?php if (!paiement_en_ligne_actif()): ?>
+            <h2>5. Paiement de vos ventes</h2>
+            <p>
+                Le client vous paie <strong>directement à la livraison</strong>, en espèces ou par Wave. <?= e(NOM_SITE) ?> n'encaisse
+                rien pour vous et ne prend aucune commission sur vos ventes.
+            </p>
+            <?php else: ?>
             <h2>5. Paiements en ligne et versements</h2>
             <ul>
                 <li>Vous donnez mandat à <?= e(NOM_SITE) ?> d'encaisser en votre nom le prix des commandes payées en ligne
@@ -77,6 +86,7 @@ require __DIR__ . '/../../includes/entete.php';
                     sur votre numéro Wave, à partir de <?= e(format_fcfa((int) parametre('versement_minimum_fcfa', '1000'))) ?> disponibles.</li>
                 <li>Montant reversé = prix des maillots + frais de livraison − frais de transaction éventuels ; le détail est affiché pour chaque commande.</li>
             </ul>
+            <?php endif; ?>
 
             <h2>6. Avis</h2>
             <p>Les clients ayant reçu une commande peuvent vous noter publiquement. Vous pouvez répondre à chaque avis, avec courtoisie. Demander ou acheter des avis est interdit.</p>
@@ -93,7 +103,7 @@ require __DIR__ . '/../../includes/entete.php';
 
             <h2>8. Fermeture</h2>
             <p>
-                Vous pouvez fermer votre boutique en supprimant votre compte, une fois vos commandes terminées et votre portefeuille versé.
+                Vous pouvez fermer votre boutique en supprimant votre compte, une fois vos commandes terminées<?= paiement_en_ligne_actif() ? ' et votre portefeuille versé' : '' ?>.
                 L'abonnement déjà payé n'est pas remboursé.
             </p>
         </article>

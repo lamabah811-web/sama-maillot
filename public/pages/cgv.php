@@ -7,13 +7,14 @@
 require __DIR__ . '/../../includes/config.php';
 
 $titre_page = 'Conditions générales de vente';
-$description_page = 'Conditions générales de vente de SAMA MAILLOT : commande, paiement en ligne ou à la livraison, livraison, réclamations et remboursements.';
+$description_page = 'Conditions générales de vente de SAMA MAILLOT : commande, paiement ' . (paiement_en_ligne_actif() ? 'en ligne ou ' : '') . 'à la livraison, livraison, réclamations et remboursements.';
 $page_active = 'cgv';
 
 $confirmation = parametre('confirmation_vendeur_heures', '24');
 $avec_code = parametre('deblocage_avec_code_heures', '24');
 $sans_code = parametre('deblocage_sans_code_heures', '48');
 $minutes_paiement = parametre('paiement_en_ligne_minutes', '30');
+$en_ligne = paiement_en_ligne_actif();   // éteint : paiement à la livraison uniquement
 $reponse_litige = parametre('litige_reponse_vendeur_heures', '48');
 
 require __DIR__ . '/../../includes/entete.php';
@@ -69,12 +70,13 @@ require __DIR__ . '/../../includes/entete.php';
             </ol>
 
             <h2 id="paiement">4. Paiement</h2>
-            <h3>4.1 Paiement à la livraison</h3>
+            <?php if ($en_ligne): ?><h3>4.1 Paiement à la livraison</h3><?php endif; ?>
             <p>
                 Vous payez le vendeur directement à la réception (espèces ou Wave). <?= e(NOM_SITE) ?> ne détient pas cet argent
                 et <strong>ne peut pas rembourser</strong> ; en cas de problème, vous pouvez ouvrir une réclamation et signaler le vendeur.
                 Le nombre de commandes à la livraison en cours est limité à <?= e(parametre('commandes_livraison_simultanees', '3')) ?> par client.
             </p>
+            <?php if ($en_ligne): ?>
             <h3>4.2 Paiement en ligne (paiement sécurisé)</h3>
             <ul>
                 <li>Vous payez le total (maillots + livraison) par Wave, Orange Money, Free Money ou carte, via un prestataire de paiement agréé.
@@ -85,13 +87,18 @@ require __DIR__ . '/../../includes/entete.php';
                     (déduction faite des frais de transaction éventuels, affichés au vendeur). En cas de problème reconnu, vous êtes remboursé.</li>
                 <li>Un code de livraison à 4 chiffres vous est donné : ne le communiquez <strong>qu'à la réception</strong> du maillot.</li>
             </ul>
+            <?php else: ?>
+            <p>Le paiement en ligne n'est pas proposé pour le moment : toutes les commandes se paient à la livraison.</p>
+            <?php endif; ?>
 
-            <h2 id="livraison">5. Livraison et code de livraison</h2>
+            <h2 id="livraison">5. Livraison<?= $en_ligne ? ' et code de livraison' : '' ?></h2>
             <ul>
                 <li>La livraison est assurée par le vendeur (lui-même ou un livreur de son choix), selon le délai indicatif de sa zone ; le retrait sur place est possible si la boutique le propose.</li>
                 <li>Le vendeur vous appelle au numéro indiqué pour organiser la remise. Vous pouvez le contacter sur WhatsApp depuis votre commande.</li>
+                <?php if ($en_ligne): ?>
                 <li>Paiement en ligne : à la remise, vous donnez votre code ; le vendeur le saisit, ce qui prouve la livraison.
                     S'il déclare la livraison sans code (colis remis à un proche, par exemple), vous en êtes averti.</li>
+                <?php endif; ?>
                 <li>Vous confirmez la réception depuis votre commande. Sans réclamation, la commande est considérée comme reçue
                     <?= e($avec_code) ?> heures après une livraison prouvée par le code, ou <?= e($sans_code) ?> heures après une livraison déclarée sans code.</li>
             </ul>
@@ -100,24 +107,26 @@ require __DIR__ . '/../../includes/entete.php';
             <ul>
                 <li>Vous pouvez annuler une commande tant qu'elle n'est pas expédiée (motif demandé si le vendeur l'a déjà confirmée).</li>
                 <li>Le vendeur peut refuser ou annuler une commande avec un motif (rupture, client injoignable, refus à la livraison…).</li>
-                <li>Commande payée en ligne puis annulée : vous êtes remboursé du montant total (article 8).</li>
+                <?php if ($en_ligne): ?><li>Commande payée en ligne puis annulée : vous êtes remboursé du montant total (article 8).</li><?php endif; ?>
             </ul>
 
             <h2 id="reclamation">7. Réclamations</h2>
             <ul>
                 <li>Motifs : maillot non reçu, différent de l'annonce, mauvaise taille, abîmé, contrefaçon présentée comme officielle, autre.</li>
-                <li>Délai : dès l'expédition et jusqu'à la fin du délai de réception ci-dessus (paiement en ligne) ; pour un paiement à la livraison,
+                <li>Délai : <?= $en_ligne ? 'dès l\'expédition et jusqu\'à la fin du délai de réception ci-dessus (paiement en ligne) ; pour un paiement à la livraison,' : '' ?>
                     jusqu'à <?= e(parametre('reclamation_delai_heures', '48')) ?> heures après la confirmation de réception.</li>
                 <li>Vous décrivez le problème et pouvez joindre jusqu'à 3 photos. Le vendeur a <?= e($reponse_litige) ?> heures pour répondre.
-                    Pendant la réclamation, l'argent d'un paiement en ligne est <strong>bloqué</strong>.</li>
+                    <?php if ($en_ligne): ?>Pendant la réclamation, l'argent d'un paiement en ligne est <strong>bloqué</strong>.<?php endif; ?></li>
                 <li>Si vous trouvez un accord avec le vendeur, vous clôturez la réclamation. Sinon, <?= e(NOM_SITE) ?> examine les éléments et décide.
                     Une réclamation jugée fondée compte comme un signalement du vendeur.</li>
             </ul>
 
             <h2 id="remboursement">8. Remboursements</h2>
             <p>
+                <?php if ($en_ligne): ?>
                 Paiement en ligne : en cas d'annulation d'une commande payée ou de réclamation jugée fondée, <?= e(NOM_SITE) ?> vous
                 rembourse le montant payé, sur le moyen de paiement utilisé ou par Wave, et vous communique la référence du remboursement.
+                <?php endif; ?>
                 Paiement à la livraison : <?= e(NOM_SITE) ?> ne détenant pas l'argent, le remboursement relève d'un accord avec le vendeur ;
                 la médiation de <?= e(NOM_SITE) ?> reste possible. Les échanges et retours hors réclamation se font selon les conditions du vendeur.
             </p>

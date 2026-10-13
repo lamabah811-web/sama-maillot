@@ -51,7 +51,7 @@ require __DIR__ . '/../../includes/entete.php';
                 <?= e(NOM_SITE) ?> est une <strong>place de marché</strong> : elle permet à des boutiques indépendantes du Sénégal de
                 présenter leurs maillots de football et aux acheteurs de les commander. Le contrat de vente est conclu entre
                 l'acheteur et le vendeur. <?= e(NOM_SITE) ?> fournit l'outil, contrôle le respect des règles, fait la médiation
-                en cas de problème et, pour les paiements en ligne, conserve l'argent jusqu'à la réception (paiement sécurisé).
+                en cas de problème<?= paiement_en_ligne_actif() ? ' et, pour les paiements en ligne, conserve l\'argent jusqu\'à la réception (paiement sécurisé)' : '' ?>.
             </p>
 
             <h2 id="compte">3. Compte</h2>
@@ -74,7 +74,7 @@ require __DIR__ . '/../../includes/entete.php';
             </ul>
             <p>
                 Après <?= e(parametre('refus_livraison_avant_blocage', '3')) ?> refus de commandes à la livraison, le paiement à la
-                livraison est désactivé sur le compte ; le paiement en ligne reste possible.
+                livraison est désactivé sur le compte<?= paiement_en_ligne_actif() ? ' ; le paiement en ligne reste possible' : '' ?>.
             </p>
 
             <h2 id="avis">5. Avis</h2>

@@ -11,6 +11,11 @@ require __DIR__ . '/../../includes/config.php';
 [$utilisateur, $boutique] = exiger_vendeur();
 $boutiqueId = (int) $boutique['id'];
 
+// Paiement en ligne éteint : rien ne passe par le portefeuille (les clients paient le vendeur à la livraison).
+if (!paiement_en_ligne_actif()) {
+    rediriger('vendeur/');
+}
+
 $soldes = soldes_portefeuille($boutiqueId);
 $mouvements = mouvements_boutique($boutiqueId, 60);
 $versements = versements_effectues($boutiqueId, 20);

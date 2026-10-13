@@ -75,6 +75,23 @@ $rubriques = [
     ],
 ];
 
+// Paiement en ligne éteint : uniquement le paiement à la livraison (pas de code de livraison, pas de remboursement
+// par la plateforme, pas de versement aux vendeurs).
+if (!paiement_en_ligne_actif()) {
+    $description_page = 'Toutes les réponses sur SAMA MAILLOT : paiement à la livraison, livraison, réclamations, abonnement vendeur.';
+    $rubriques['Commander et payer']['Quels moyens de paiement sont acceptés ?'] =
+        'Le paiement à la livraison : vous payez le vendeur, en espèces ou par Wave, quand vous recevez votre maillot. Rien à payer avant.';
+    unset($rubriques['Commander et payer']['Pourquoi payer en ligne ?'], $rubriques['Code de livraison'],
+        $rubriques['Réclamations et remboursements']['Comment suis-je remboursé ?'],
+        $rubriques['Réclamations et remboursements']['Et si j\'ai payé à la livraison ?'],
+        $rubriques['Vendeurs et abonnement']['Quand suis-je payé pour une vente en ligne ?']);
+    $rubriques['Réclamations et remboursements']['Puis-je être remboursé ?'] =
+        'Vous payez le vendeur directement, à la livraison : vérifiez le maillot avant de payer. En cas de problème, SAMA MAILLOT '
+        . 'fait la médiation avec le vendeur, et une réclamation fondée compte comme un signalement du vendeur.';
+    $rubriques['Vendeurs et abonnement']['Comment suis-je payé pour mes ventes ?'] =
+        'Directement par le client, à la livraison (en espèces ou par Wave). SAMA MAILLOT ne prend aucune commission.';
+}
+
 // Données structurées FAQPage (§30)
 $donnees_faq = ['@context' => 'https://schema.org', '@type' => 'FAQPage', 'mainEntity' => []];
 foreach ($rubriques as $questions) {
