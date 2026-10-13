@@ -2217,16 +2217,34 @@ h1, h2, h3 {
     min-height: 48px;
     border: 1px solid var(--sm-bordure);
     border-radius: var(--sm-rayon-bouton);
+    gap: 0.65rem;
+    padding: 0.5rem 0.75rem;
     background: var(--sm-surface);
-    color: var(--sm-or);
+    color: var(--sm-texte);
+    font-weight: 600;
+    text-decoration: none;
     transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
 }
 
 .sm-bouton-icone-social:hover {
     border-color: var(--sm-or);
     background: var(--sm-teinte-or);
-    color: var(--sm-or);
+    color: var(--sm-texte);
     transform: translateY(-1px);
+}
+
+/* « f » de Facebook en or du site (le logo Google garde ses couleurs officielles) */
+.sm-bouton-icone-social--facebook .sm-bouton-social__icone {
+    color: var(--sm-or);
+}
+
+.sm-bouton-icone-social__texte {
+    white-space: nowrap;
+}
+
+/* Après le clic, le libellé s'efface avec l'icône pour laisser place à l'indicateur */
+.sm-bouton-icone-social[aria-busy="true"] .sm-bouton-icone-social__texte {
+    visibility: hidden;
 }
 
 .sm-bouton-icone-social:focus-visible {
