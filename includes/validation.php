@@ -135,6 +135,11 @@ function creer_slug(string $texte): string
     if (class_exists('Normalizer')) {
         $texte = (string) Normalizer::normalize($texte, Normalizer::FORM_D);
         $texte = preg_replace('/\p{Mn}+/u', '', $texte) ?? $texte;
+    } else {
+        // Sans l'extension intl (PHP en ligne de commande, certains hébergements) : lettres accentuées du français.
+        $texte = strtr($texte, ['à' => 'a', 'â' => 'a', 'ä' => 'a', 'á' => 'a', 'ç' => 'c', 'é' => 'e', 'è' => 'e', 'ê' => 'e',
+            'ë' => 'e', 'î' => 'i', 'ï' => 'i', 'í' => 'i', 'ô' => 'o', 'ö' => 'o', 'ó' => 'o', 'ù' => 'u', 'û' => 'u', 'ü' => 'u',
+            'ú' => 'u', 'ÿ' => 'y', 'ñ' => 'n', 'œ' => 'oe', 'æ' => 'ae']);
     }
 
     $texte = preg_replace('/[^a-z0-9]+/', '-', $texte) ?? '';
