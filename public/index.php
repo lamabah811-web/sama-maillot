@@ -52,8 +52,9 @@ require __DIR__ . '/../includes/entete.php';
                 </h1>
 
                 <p class="lead mb-4">
-                    Trouvez votre maillot parmi les boutiques du Sénégal. Payez en ligne de façon sécurisée,
-                    à la livraison, ou commandez directement via WhatsApp.
+                    Trouvez votre maillot parmi les boutiques du Sénégal. <?= paiement_en_ligne_actif()
+                        ? 'Payez en ligne de façon sécurisée, à la livraison, ou commandez directement via WhatsApp.'
+                        : 'Payez à la livraison, maillot en main, ou commandez directement via WhatsApp.' ?>
                 </p>
 
                 <div class="d-flex flex-wrap gap-2 mb-4">
