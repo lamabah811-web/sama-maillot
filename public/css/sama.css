@@ -6263,6 +6263,20 @@ a.sm-alerte-admin:hover {
     outline-offset: 3px;
 }
 
+/* Téléphone : bouton un peu plus petit (il cache moins le contenu qui défile dessous),
+   et espace sous le pied de page pour que sa dernière ligne passe au-dessus du bouton. */
+@media (max-width: 575.98px) {
+    .sm-theme-flottant {
+        width: 2.6rem;
+        height: 2.6rem;
+        font-size: 1.05rem;
+    }
+
+    .sm-pied__bas {
+        padding-bottom: 3.5rem;
+    }
+}
+
 @media (min-width: 992px) {
     .sm-theme-flottant {
         right: 1.5rem;

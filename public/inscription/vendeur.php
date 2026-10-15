@@ -335,8 +335,8 @@ require __DIR__ . '/../../includes/entete.php';
                            name="politique_vendeur" value="1" required <?= aria_erreur($erreurs, 'politique_vendeur') ?>>
                     <label class="form-check-label" for="politique_vendeur">
                         J'accepte la <a href="<?= e(url_page('politique-vendeur')) ?>" target="_blank" rel="noopener">politique vendeur</a>
-                        (authenticité déclarée, répliques signalées comme telles) et le
-                        <a href="<?= e(url_page('cgv')) ?>#paiement" target="_blank" rel="noopener">mandat d'encaissement</a> des paiements en ligne.
+                        (authenticité déclarée, répliques signalées comme telles)<?php if (paiement_en_ligne_actif()): ?> et le
+                        <a href="<?= e(url_page('cgv')) ?>#paiement" target="_blank" rel="noopener">mandat d'encaissement</a> des paiements en ligne<?php endif; ?>.
                     </label>
                 </div>
                 <?= message_erreur($erreurs, 'politique_vendeur') ?>

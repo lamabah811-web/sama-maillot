@@ -52,7 +52,8 @@ if ($stats['publies'] === 0) {
 if (empty($boutique['logo'])) {
     $a_faire[] = ['vendeur/boutique.php', 'bi-image', 'Ajoutez le logo de votre boutique'];
 }
-if (empty($boutique['numero_wave'])) {
+// Numéro Wave des versements : seulement utile (et demandé) quand le paiement en ligne est actif.
+if (empty($boutique['numero_wave']) && paiement_en_ligne_actif()) {
     $a_faire[] = ['vendeur/boutique.php', 'bi-wallet2', 'Renseignez votre numéro Wave pour les versements'];
 }
 
