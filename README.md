@@ -7,6 +7,63 @@ Référence fonctionnelle et technique : **cahier des charges v2.1**.
 - Application PHP traditionnelle (rendu côté serveur), sans framework, sans npm
 - Devise : FCFA (montants entiers) · Fuseau horaire : Africa/Dakar
 
+---
+
+## 🔑 Accès de test (pour le jury)
+
+Tous les comptes ont le même mot de passe : **`Test2026`**.
+Page de connexion : `http://localhost/sama-maillot/connexion/`
+
+| Rôle | E-mail | Mot de passe | Ce que l'on peut tester |
+|---|---|---|---|
+| **Administrateur** | `admin@test.sama` | `Test2026` | Tableau de bord, utilisateurs et vendeurs, catalogue et maillots, commandes, réclamations, signalements, abonnements à valider, paramètres, état du système |
+| **Client** | `client@test.sama` | `Test2026` | Panier, commande, suivi « Mes commandes », favoris, notifications, avis, réclamation |
+| **Vendeur** (boutique active) | `vendeur1@test.sama` | `Test2026` | Boutique « Dakar Foot Store » : maillots, stock, commandes à confirmer / livrer, livraison, avis, abonnement |
+| **Vendeur** (boutique masquée) | `vendeur2@test.sama` | `Test2026` | Boutique « Thiès Maillots Rétro » masquée faute d'abonnement : renouvellement par Wave |
+| **Visiteur sans compte** | — | — | Commande sans créer de compte (nom complet + téléphone) et suivi par lien secret |
+
+> Les autres comptes présents dans la base sont des comptes réels du développeur : leur mot de passe
+> a été remplacé dans l'export et ils ne sont pas utilisables. Utilisez les comptes ci-dessus.
+
+## 🚀 Installation rapide (XAMPP)
+
+1. Copier le dossier du projet dans `C:\xampp\htdocs\sama-maillot`.
+2. Démarrer **Apache** et **MySQL** dans le panneau XAMPP.
+3. Ouvrir `http://localhost/phpmyadmin` → **Importer** → choisir **`sama_maillot.sql`** (à la racine du projet) → **Importer**.
+   La base `sama_maillot` est créée avec toutes les données de démonstration.
+4. Copier **`.env.exemple`** en **`.env`** (à la racine) puis renseigner `CLE_CHIFFREMENT`, générée avec :
+   `C:\xampp\php\php.exe -r "echo base64_encode(random_bytes(32));"`.
+   Les autres valeurs par défaut conviennent à XAMPP (`root` sans mot de passe).
+5. Bibliothèques PHP : le dossier `vendor/` est fourni dans l'archive du dépôt. Sinon : `composer install`.
+6. Ouvrir **`http://localhost/sama-maillot/`**.
+
+En local, les e-mails (notifications, mot de passe oublié) ne partent pas réellement : leur contenu
+s'affiche dans un encadré « Mode développement » en haut de la page.
+La connexion Google n'apparaît que si ses identifiants sont configurés dans `.env` (voir
+[docs/README_CONNEXION_SOCIALE.md](docs/README_CONNEXION_SOCIALE.md)).
+
+## ✅ Parcours conseillé pour la démonstration
+
+1. **Visiteur** : accueil, catalogue (filtres équipe / taille / prix), fiche d'un maillot, ajout au panier,
+   commande **sans compte** (nom complet + téléphone), paiement à la livraison, page de suivi.
+2. **Vendeur** (`vendeur1@test.sama`) : confirmer puis expédier et livrer la commande, publier un maillot avec photo.
+3. **Client** : confirmer la réception, laisser un avis noté, ouvrir une réclamation.
+4. **Administrateur** (`admin@test.sama`) : traiter la réclamation, valider un abonnement, modérer, consulter l'état du système.
+
+## Fonctionnalités principales
+
+- Catalogue (équipes nationales, clubs, rétro), recherche, filtres, favoris, partage WhatsApp
+- Panier multi-boutiques, commande avec ou sans compte, paiement à la livraison, commande via WhatsApp
+- Suivi de commande, notifications dans le site et par e-mail
+- Espace vendeur : boutique, maillots et stock par taille, zones et tarifs de livraison, abonnement Wave (14 jours d'essai)
+- Avis et notes des vendeurs, réclamations avec médiation, signalements et suspension automatique
+- Administration complète, paramètres modifiables, journal d'audit, état du système
+- Connexion avec Google (OAuth 2.0 / OpenID Connect, côté serveur)
+- Thème clair / sombre, responsive mobile, accessibilité, sécurité (CSRF, CSP, requêtes préparées, limitation des tentatives)
+- 62 tests automatisés (PHPUnit) : `php vendor/bin/phpunit`
+
+---
+
 ## Organisation des fichiers (§28)
 
 ```
