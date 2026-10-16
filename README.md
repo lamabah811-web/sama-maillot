@@ -22,8 +22,16 @@ Page de connexion : `http://localhost/sama-maillot/connexion/`
 | **Vendeur** (boutique masquée) | `vendeur2@test.sama` | `Test2026` | Boutique « Thiès Maillots Rétro » masquée faute d'abonnement : renouvellement par Wave |
 | **Visiteur sans compte** | — | — | Commande sans créer de compte (nom complet + téléphone) et suivi par lien secret |
 
-> Les autres comptes présents dans la base sont des comptes réels du développeur : leur mot de passe
-> a été remplacé dans l'export et ils ne sont pas utilisables. Utilisez les comptes ci-dessus.
+**Comptes utilisés pendant le développement** (mêmes données que pendant les essais, mot de passe `Test2026` dans cette base) :
+
+| Rôle | E-mail | Mot de passe | Contenu |
+|---|---|---|---|
+| **Administrateur** | `lamabah811@gmail.com` | `Test2026` | Compte administrateur principal (réclamation déjà décidée, journal des actions) |
+| **Vendeur** | `lbah89381@gmail.com` | `Test2026` | Boutique « Maillot shop » : 4 maillots publiés, commandes reçues et livrées, avis |
+| **Client** | `lamarana2@gmail.com` | `Test2026` | 3 commandes, un avis publié, une réclamation |
+
+> Les comptes « invités » (adresses `invite-…@invite.invalid`) sont créés automatiquement par les commandes
+> sans compte : ils n'ont pas de mot de passe, on suit leurs commandes par le lien de suivi.
 
 ## 🚀 Installation rapide (XAMPP)
 
