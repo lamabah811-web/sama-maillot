@@ -3275,6 +3275,34 @@ h1, h2, h3 {
     color: var(--sm-accent);
 }
 
+/* Pastille « commandes à confirmer » (or, chiffre sombre : jamais de blanc sur l'or) */
+.sm-menu-vendeur__pastille {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.45rem;
+    height: 1.45rem;
+    padding: 0 0.4rem;
+    border-radius: 999px;
+    background: var(--sm-or);
+    color: var(--sm-sur-or);
+    font-size: 0.8rem;
+    font-weight: 800;
+    line-height: 1;
+    animation: sm-pastille-arrivee 0.35s ease-out;
+}
+
+@keyframes sm-pastille-arrivee {
+    from { transform: scale(0.4); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sm-menu-vendeur__pastille {
+        animation: none;
+    }
+}
+
 /* Chiffres clés du tableau de bord (données réelles) */
 .sm-chiffres {
     display: grid;

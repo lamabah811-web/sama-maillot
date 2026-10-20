@@ -242,10 +242,23 @@ function menu_vendeur(string $actif): string
         unset($entrees['portefeuille']);
     }
 
+    // Pastille sur « Commandes » : nombre de commandes à confirmer (même calcul que l'onglet « À confirmer »).
+    $aConfirmer = 0;
+    $vendeur = utilisateur_connecte();
+    $boutique = $vendeur !== null ? boutique_du_vendeur((int) $vendeur['id']) : null;
+    if ($boutique !== null) {
+        $aConfirmer = compter_commandes_boutique((int) $boutique['id'])['attente_confirmation'] ?? 0;
+    }
+
     $html = '<nav class="sm-menu-vendeur mb-4" aria-label="Espace vendeur"><ul>';
     foreach ($entrees as $cle => [$chemin, $icone, $libelle]) {
+        $pastille = '';
+        if ($cle === 'commandes' && $aConfirmer > 0) {
+            $pastille = ' <span class="sm-menu-vendeur__pastille" aria-hidden="true">' . e($aConfirmer > 99 ? '99+' : $aConfirmer) . '</span>'
+                . '<span class="visually-hidden"> (' . e($aConfirmer) . ' à confirmer)</span>';
+        }
         $html .= '<li><a href="' . e(url($chemin)) . '"' . ($cle === $actif ? ' aria-current="page"' : '') . '>'
-            . '<i class="bi ' . e($icone) . '" aria-hidden="true"></i> ' . e($libelle) . '</a></li>';
+            . '<i class="bi ' . e($icone) . '" aria-hidden="true"></i> ' . e($libelle) . $pastille . '</a></li>';
     }
 
     return $html . '</ul></nav>';
